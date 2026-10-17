@@ -1,13 +1,27 @@
-import { Container, Typography } from '@mui/material'
+import { Provider } from 'react-redux'
+import { RouterProvider, type DataRouter } from 'react-router-dom'
+import { ColorModeProvider } from '@/app/ColorModeProvider'
+import type { AppStore } from '@/app/store'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { SessionBootstrap } from '@/features/auth/SessionBootstrap'
 
-function App() {
+interface AppProps {
+  store: AppStore
+  router: DataRouter
+}
+
+/** Raíz de la app. Store y router llegan de fuera para poder montarla igual en producción y en tests. */
+function App({ store, router }: AppProps) {
   return (
-    <Container sx={{ py: 6 }}>
-      <Typography variant="h3" component="h1">
-        Bloom
-      </Typography>
-      <Typography color="text.secondary">Plantas, flores y guías para tu hogar.</Typography>
-    </Container>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <ColorModeProvider>
+          <SessionBootstrap>
+            <RouterProvider router={router} />
+          </SessionBootstrap>
+        </ColorModeProvider>
+      </Provider>
+    </ErrorBoundary>
   )
 }
 
