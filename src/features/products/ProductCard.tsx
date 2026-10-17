@@ -1,5 +1,8 @@
+import AddShoppingCart from '@mui/icons-material/AddShoppingCart'
 import {
+  Button,
   Card,
+  CardActions,
   CardActionArea,
   CardContent,
   CardMedia,
@@ -10,6 +13,9 @@ import {
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import type { Product } from '@/api/types'
+import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { itemAdded, maxQuantityFor } from '@/features/cart/cartSlice'
+import { toastShown } from '@/features/ui/uiSlice'
 import { formatMoney } from '@/lib/format'
 
 export function StockChip({ product }: { product: Product }) {
@@ -21,14 +27,37 @@ export function StockChip({ product }: { product: Product }) {
   return null
 }
 
+function QuickAdd({ product }: { product: Product }) {
+  const dispatch = useAppDispatch()
+  const inCart = useAppSelector(
+    (state) => state.cart.items.find((item) => item.productId === product.id)?.quantity ?? 0,
+  )
+  const unavailable = maxQuantityFor(product) - inCart < 1
+  return (
+    <Button
+      size="small"
+      variant="outlined"
+      startIcon={<AddShoppingCart />}
+      disabled={unavailable}
+      aria-label={`Agregar ${product.name} al carrito`}
+      onClick={() => {
+        dispatch(itemAdded({ product }))
+        dispatch(toastShown(`${product.name} se agregó al carrito`, 'success'))
+      }}
+    >
+      {maxQuantityFor(product) < 1
+        ? 'Agotado'
+        : inCart > 0 && unavailable
+          ? 'En tu carrito'
+          : 'Agregar'}
+    </Button>
+  )
+}
+
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <Card sx={{ height: '100%' }}>
-      <CardActionArea
-        component={RouterLink}
-        to={`/productos/${product.id}`}
-        sx={{ height: '100%' }}
-      >
+    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <CardActionArea component={RouterLink} to={`/productos/${product.id}`} sx={{ flexGrow: 1 }}>
         {product.imageUrl ? (
           <CardMedia
             component="img"
@@ -59,6 +88,9 @@ export function ProductCard({ product }: { product: Product }) {
           </Typography>
         </CardContent>
       </CardActionArea>
+      <CardActions sx={{ px: 2, pb: 2, pt: 0 }}>
+        <QuickAdd product={product} />
+      </CardActions>
     </Card>
   )
 }

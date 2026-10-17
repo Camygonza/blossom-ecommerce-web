@@ -7,6 +7,7 @@ import { errorMessage } from '@/api/errors'
 import type { Product } from '@/api/types'
 import { EmptyState } from '@/components/EmptyState'
 import { formatMoney, formatWeight } from '@/lib/format'
+import { AddToCart } from '@/features/cart/AddToCart'
 import { StockChip } from './ProductCard'
 
 function Specs({ product }: { product: Product }) {
@@ -157,6 +158,7 @@ export function ProductDetailPage() {
             )}
             <Divider />
             <Specs product={product} />
+            <AddToCart product={product} />
           </Stack>
         </Grid>
       </Grid>

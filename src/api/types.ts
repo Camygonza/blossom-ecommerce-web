@@ -90,3 +90,51 @@ export interface ApiError {
   status: number | 'NETWORK_ERROR'
   problem?: ProblemDetail
 }
+
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'
+
+export interface OrderItem {
+  productId: number
+  productName: string
+  quantity: number
+  /** Precio congelado al comprar. */
+  unitPrice: number
+  subtotal: number
+}
+
+export interface Order {
+  id: number
+  status: OrderStatus
+  total: number
+  createdAt: string
+  customerEmail: string
+  items: OrderItem[]
+}
+
+export interface CreateOrderRequest {
+  items: { productId: number; quantity: number }[]
+}
+
+export interface PageParams {
+  page?: number
+  size?: number
+}
+
+export interface AdminOrderParams extends PageParams {
+  status?: OrderStatus
+}
+
+/** Alta/edición de producto (admin). `version` evita pisar cambios de otro admin al editar. */
+export interface ProductInput {
+  type: ProductType
+  name: string
+  description?: string
+  price: number
+  imageUrl?: string
+  categoryId: number
+  stock?: number
+  weightGrams?: number
+  downloadUrl?: string
+  licenseType?: LicenseType
+  version?: number
+}

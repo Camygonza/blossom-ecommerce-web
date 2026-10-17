@@ -1,4 +1,4 @@
-import type { AuthResponse, Category, Product, User } from '@/api/types'
+import type { AuthResponse, Category, Order, Product, User } from '@/api/types'
 
 export const categories: Category[] = [
   { id: 1, name: 'Plantas de interior', description: 'Plantas para el hogar' },
@@ -78,3 +78,20 @@ export const authFor = (user: User, suffix = '1'): AuthResponse => ({
   expiresIn: 900,
   user,
 })
+
+export const orderFixture: Order = {
+  id: 7,
+  status: 'PENDING',
+  total: 91.8,
+  createdAt: '2026-03-05T15:30:00Z',
+  customerEmail: 'cliente@bloom.test',
+  items: [
+    {
+      productId: 1,
+      productName: 'Monstera Deliciosa',
+      quantity: 2,
+      unitPrice: 45.9,
+      subtotal: 91.8,
+    },
+  ],
+}

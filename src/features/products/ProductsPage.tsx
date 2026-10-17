@@ -1,7 +1,8 @@
-import { Alert, Box, Button, Pagination, Stack, Typography } from '@mui/material'
+import { Alert, Button, Stack, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { useGetProductsQuery } from '@/api/api'
 import { errorMessage } from '@/api/errors'
+import { AppPagination } from '@/components/AppPagination'
 import { EmptyState } from '@/components/EmptyState'
 import { PAGE_SIZE, useProductFilters } from './useProductFilters'
 import { ProductCard, ProductCardSkeleton } from './ProductCard'
@@ -72,30 +73,15 @@ export function ProductsPage() {
             ))}
           </Grid>
           {data.totalPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Pagination
-                count={data.totalPages}
-                page={filters.page}
-                onChange={(_event, page) => {
-                  update({ page })
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
-                }}
-                color="primary"
-                getItemAriaLabel={(type, page, selected) => {
-                  if (type === 'page') return selected ? `Página ${page}` : `Ir a la página ${page}`
-                  const labels = {
-                    first: 'Primera página',
-                    last: 'Última página',
-                    next: 'Página siguiente',
-                    previous: 'Página anterior',
-                    'start-ellipsis': 'Más páginas',
-                    'end-ellipsis': 'Más páginas',
-                  }
-                  return labels[type]
-                }}
-                aria-label="Paginación de productos"
-              />
-            </Box>
+            <AppPagination
+              count={data.totalPages}
+              page={filters.page}
+              onChange={(page) => {
+                update({ page })
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              label="Paginación de productos"
+            />
           )}
         </>
       )}

@@ -13,7 +13,7 @@ describe('ProductsPage', () => {
     expect(await screen.findByText('Monstera Deliciosa')).toBeInTheDocument()
     expect(screen.getByText('$45.90')).toBeInTheDocument()
     expect(screen.getByText('Quedan 3')).toBeInTheDocument()
-    expect(screen.getByText('Agotado')).toBeInTheDocument()
+    expect(screen.getAllByText('Agotado').length).toBeGreaterThan(0)
     expect(screen.getByText('Digital')).toBeInTheDocument()
     expect(screen.getByText('4 productos')).toBeInTheDocument()
     expect(await accessibilityViolations(container)).toEqual([])
