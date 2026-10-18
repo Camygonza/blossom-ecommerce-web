@@ -8,17 +8,6 @@ export const STATUS_LABEL: Record<OrderStatus, string> = {
   CANCELLED: 'Cancelada',
 }
 
-export const STATUS_COLOR: Record<
-  OrderStatus,
-  'default' | 'info' | 'primary' | 'success' | 'error'
-> = {
-  PENDING: 'default',
-  PAID: 'info',
-  SHIPPED: 'primary',
-  DELIVERED: 'success',
-  CANCELLED: 'error',
-}
-
 /** Mismas transiciones que valida el api (OrderStatus.canTransitionTo); el api sigue siendo la autoridad. */
 export const NEXT_STATUSES: Record<OrderStatus, OrderStatus[]> = {
   PENDING: ['PAID', 'CANCELLED'],

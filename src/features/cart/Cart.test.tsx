@@ -40,9 +40,7 @@ describe('adding to the cart', () => {
     const user = userEvent.setup()
     renderApp('/productos')
 
-    expect(
-      await screen.findByRole('button', { name: 'Agregar Ramo de Girasoles al carrito' }),
-    ).toBeDisabled()
+    expect(await screen.findByRole('button', { name: 'Agotado: Ramo de Girasoles' })).toBeDisabled()
 
     const digital = screen.getByRole('button', { name: 'Agregar Guía de Interior al carrito' })
     await user.click(digital)

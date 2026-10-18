@@ -16,14 +16,14 @@ import type { Product } from '@/api/types'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { itemAdded, maxQuantityFor } from '@/features/cart/cartSlice'
 import { toastShown } from '@/features/ui/uiSlice'
+import { toneSx } from '@/components/toneChip'
 import { formatMoney } from '@/lib/format'
 
 export function StockChip({ product }: { product: Product }) {
-  if (product.type === 'DIGITAL')
-    return <Chip size="small" color="secondary" variant="outlined" label="Digital" />
+  if (product.type === 'DIGITAL') return <Chip size="small" label="Digital" sx={toneSx('info')} />
   const stock = product.stock ?? 0
-  if (stock === 0) return <Chip size="small" color="error" label="Agotado" />
-  if (stock <= 5) return <Chip size="small" color="warning" label={`Quedan ${stock}`} />
+  if (stock === 0) return <Chip size="small" label="Agotado" sx={toneSx('error')} />
+  if (stock <= 5) return <Chip size="small" label={`Quedan ${stock}`} sx={toneSx('warning')} />
   return null
 }
 
@@ -33,23 +33,26 @@ function QuickAdd({ product }: { product: Product }) {
     (state) => state.cart.items.find((item) => item.productId === product.id)?.quantity ?? 0,
   )
   const unavailable = maxQuantityFor(product) - inCart < 1
+  const label =
+    maxQuantityFor(product) < 1
+      ? 'Agotado'
+      : inCart > 0 && unavailable
+        ? 'En tu carrito'
+        : 'Agregar'
   return (
     <Button
       size="small"
       variant="outlined"
       startIcon={<AddShoppingCart />}
       disabled={unavailable}
-      aria-label={`Agregar ${product.name} al carrito`}
+      // el nombre accesible empieza por el texto visible (WCAG 2.5.3)
+      aria-label={unavailable ? `${label}: ${product.name}` : `Agregar ${product.name} al carrito`}
       onClick={() => {
         dispatch(itemAdded({ product }))
         dispatch(toastShown(`${product.name} se agregó al carrito`, 'success'))
       }}
     >
-      {maxQuantityFor(product) < 1
-        ? 'Agotado'
-        : inCart > 0 && unavailable
-          ? 'En tu carrito'
-          : 'Agregar'}
+      {label}
     </Button>
   )
 }
