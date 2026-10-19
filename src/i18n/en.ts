@@ -128,7 +128,7 @@ export const en: Record<string, string> = {
     'Digital products download as soon as you buy, no waiting.',
   'Cuidado que se nota': 'Care that shows',
   'Elegimos plantas sanas y herramientas que duran.': 'We pick healthy plants and tools that last.',
-  'Plantas y flores ilustradas': 'Illustrated plants and flowers',
+  'Plantas y flores': 'Plants and flowers',
 
   // Catálogo y filtros
   'Filtros de productos': 'Product filters',

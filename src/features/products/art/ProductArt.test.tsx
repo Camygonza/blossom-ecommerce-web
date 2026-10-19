@@ -126,7 +126,7 @@ describe('home page', () => {
       'href',
       '/productos?categoria=1',
     )
-    expect(screen.getByRole('img', { name: 'Plantas y flores ilustradas' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Plantas y flores' })).toBeInTheDocument()
     expect(await screen.findByRole('heading', { name: 'Compra por categoría' })).toBeInTheDocument()
   })
 })

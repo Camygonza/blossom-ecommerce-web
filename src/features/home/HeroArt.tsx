@@ -1,35 +1,35 @@
+import { Box } from '@mui/material'
 import { useT } from '@/i18n/i18n'
-import { Fern, Fiddle, Monstera, Sunflowers, Trailing } from '@/features/products/art/motifs'
 
-/** Composición del hero: plantas de distinto porte sobre una misma línea de suelo, con flores al frente. */
+const PHOTOS = [
+  { src: '/products/01.jpg', sx: { gridRow: 'span 2', aspectRatio: '3 / 4' } },
+  { src: '/products/08.jpg', sx: { aspectRatio: '1 / 1' } },
+  { src: '/products/04.jpg', sx: { aspectRatio: '1 / 1' } },
+]
+
+/** Collage de fotos del hero: una planta grande y dos tomas más pequeñas. */
 export function HeroArt() {
   const t = useT()
   return (
-    <svg
-      viewBox="0 0 520 340"
+    <Box
       role="img"
-      aria-label={t('Plantas y flores ilustradas')}
-      style={{ width: '100%', height: 'auto' }}
+      aria-label={t('Plantas y flores')}
+      sx={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 1.5 }}
     >
-      <circle cx="270" cy="160" r="150" fill="#fff" opacity="0.12" />
-      <circle cx="440" cy="70" r="64" fill="#f4b400" opacity="0.3" />
-      <circle cx="80" cy="270" r="70" fill="#fff" opacity="0.08" />
-      <g transform="translate(10 49) scale(1.9)">
-        <Monstera />
-      </g>
-      <g transform="translate(150 49) scale(1.9)">
-        <Fiddle />
-      </g>
-      <g transform="translate(-40 142) scale(1.25)">
-        <Fern />
-      </g>
-      <g transform="translate(150 160) scale(1.1)">
-        <Sunflowers />
-      </g>
-      <g transform="translate(335 150) scale(1.15)">
-        <Trailing />
-      </g>
-      <ellipse cx="260" cy="312" rx="240" ry="8" fill="#000" opacity="0.16" />
-    </svg>
+      {PHOTOS.map(({ src, sx }) => (
+        <Box
+          key={src}
+          aria-hidden="true"
+          sx={{
+            ...sx,
+            borderRadius: 4,
+            backgroundImage: `url(${src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            boxShadow: '0 18px 40px -18px rgba(0,0,0,0.5)',
+          }}
+        />
+      ))}
+    </Box>
   )
 }

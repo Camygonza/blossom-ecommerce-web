@@ -4,17 +4,17 @@ import Grid from '@mui/material/Grid'
 import { Link as RouterLink } from 'react-router-dom'
 import { useGetCategoriesQuery, useGetProductsQuery } from '@/api/api'
 import { useT } from '@/i18n/i18n'
-import { ProductArt } from '@/features/products/art/ProductArt'
+import { ProductImage } from '@/features/products/art/ProductImage'
 import { ProductCard, ProductCardSkeleton } from '@/features/products/ProductCard'
 import { HeroArt } from './HeroArt'
 
-// Un producto representativo por categoría para dibujar su ficha en la portada.
-const CATEGORY_SAMPLE: Record<number, string> = {
-  1: 'Monstera',
-  2: 'Girasoles',
-  3: 'Maceta terracota',
-  4: 'Regadera',
-  5: 'Guía',
+// Foto representativa por categoría para la portada (si falta, ProductImage dibuja la ilustración).
+const CATEGORY_PHOTO: Record<number, { name: string; photo: string }> = {
+  1: { name: 'Costilla de Adán', photo: '01' },
+  2: { name: 'Ramo de girasoles', photo: '08' },
+  3: { name: 'Maceta de barro', photo: '15' },
+  4: { name: 'Regadera', photo: '20' },
+  5: { name: 'Guía de cuidado de plantas', photo: '25' },
 }
 
 export function HomePage() {
@@ -124,15 +124,18 @@ export function HomePage() {
                       sx={{ height: '100%' }}
                     >
                       <Box sx={{ aspectRatio: '4 / 3', overflow: 'hidden' }}>
-                        <ProductArt
+                        <ProductImage
                           product={{
-                            name: CATEGORY_SAMPLE[category.id] ?? category.name,
+                            name: CATEGORY_PHOTO[category.id]?.name ?? category.name,
                             categoryId: category.id,
+                            imageUrl: CATEGORY_PHOTO[category.id]
+                              ? `/products/${CATEGORY_PHOTO[category.id].photo}.jpg`
+                              : null,
                           }}
                         />
                       </Box>
                       <Typography sx={{ fontWeight: 600, p: 1.75, textAlign: 'center' }}>
-                        {category.name}
+                        {t(category.name)}
                       </Typography>
                     </CardActionArea>
                   </Card>
