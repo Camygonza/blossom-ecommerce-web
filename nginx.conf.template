@@ -19,6 +19,8 @@ server {
         proxy_set_header Host ${API_HOST};
         proxy_ssl_server_name on;
         proxy_ssl_name ${API_HOST};
+        # el navegador habla con este mismo origen: sin Origin la API no trata la llamada como cross-origin (CORS)
+        proxy_set_header Origin "";
         proxy_set_header X-Real-IP $remote_addr;
         # se pisa (no se acumula) para que un cliente no pueda falsear su IP ante el rate limit del api
         proxy_set_header X-Forwarded-For $remote_addr;
