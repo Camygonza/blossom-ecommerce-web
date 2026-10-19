@@ -58,10 +58,10 @@ npm run e2e                                     # contra Vite y una API local co
 
 ## Decisiones
 
-Están explicadas, con las alternativas que descarté, en [docs/decisiones.md](docs/decisiones.md). Las más importantes:
+Están explicadas, con las alternativas descartadas, en [docs/decisiones.md](docs/decisiones.md). Las más importantes:
 
 - RTK Query sobre un `baseQuery` de axios: da caché, invalidación por etiquetas (comprar o cancelar refresca el catálogo porque cambia el stock) y estados de carga sin escribir thunks.
-- Access token en memoria y refresh en `localStorage`. Un XSS podría leer el refresh; lo reduzco con una CSP estricta en nginx y sin `dangerouslySetInnerHTML`.
+- Access token en memoria y refresh en `localStorage`. Un XSS podría leer el refresh; se reduce con una CSP estricta en nginx y sin `dangerouslySetInnerHTML`.
 - El precio del carrito es solo de referencia: la API congela el real al crear la orden.
 - El idioma se resuelve con un diccionario propio (el texto en español es la clave) en lugar de una librería; una prueba falla si falta alguna traducción. La moneda no cambia con el idioma.
 - La accesibilidad se verifica con axe, tanto en los tests como en el navegador, y los chips de estado usan colores con contraste de al menos 4,5:1 en ambos modos.
@@ -70,13 +70,13 @@ Están explicadas, con las alternativas que descarté, en [docs/decisiones.md](d
 
 - Si el store se creaba dentro de un hook, en StrictMode el listener de sesión quedaba atado a otro store y el login no se reflejaba. Ahora el store y el router se crean una sola vez en `main.tsx`.
 - Con refresh tokens rotativos, dos renovaciones a la vez revocarían la sesión. La renovación se hace con una única petición compartida.
-- jsdom no mide el contraste. Axe en Chrome real encontró fallas en los chips de estado y las corregí con colores distintos por modo.
+- jsdom no mide el contraste. Axe en Chrome real encontró fallas en los chips de estado y se corrigieron con colores distintos por modo.
 - La CSP de nginx bloquea scripts en línea, que axe necesita; solo se desactiva dentro de esa prueba.
-- Con el cambio de idioma, los nombres y descripciones de producto vienen de la API en español. Los del seed los traduzco en el front; los que cree un administrador se muestran tal como se escribieron.
+- Con el cambio de idioma, los nombres y descripciones de producto vienen de la API en español. Los del seed se traducen en el front; los que cree un administrador se muestran tal como se escribieron.
 
 ## Con más tiempo
 
 - Pago real y descarga autorizada de los productos digitales.
 - Sugerencias en la búsqueda, filtro por varias categorías e imágenes en varios tamaños (`srcset`).
-- Generar los tipos desde `docs/openapi.json` (hoy los mantengo a mano) y agregar pruebas visuales de regresión.
+- Generar los tipos desde `docs/openapi.json` (hoy se mantienen a mano) y agregar pruebas visuales de regresión.
 - Traducir productos desde la API con `Accept-Language`, y agregar favoritos y reseñas.
