@@ -43,13 +43,28 @@ test('demo: registro, búsqueda, compra, historial y gestión de la orden como a
   await page.getByRole('button', { name: 'Cambiar a modo claro' }).click()
   await pause()
 
+  // Cambio de idioma: la interfaz pasa a inglés y la moneda sigue en COP
+  await page
+    .getByRole('banner')
+    .getByRole('button', { name: /Cambiar idioma a English/ })
+    .click()
+  await pause(2500)
+  await page
+    .getByRole('banner')
+    .getByRole('button', { name: /Switch language to Español/ })
+    .click()
+  await pause()
+
   // Detalle y carrito
   await page.getByRole('heading', { level: 3 }).first().click()
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   await pause(2000)
   await page.getByRole('button', { name: 'Agregar al carrito' }).click()
   await pause()
-  await page.getByRole('link', { name: /Carrito/ }).click()
+  await page
+    .getByRole('banner')
+    .getByRole('link', { name: /Carrito/ })
+    .click()
   await expect(page.getByRole('heading', { name: 'Tu carrito' })).toBeVisible()
   await pause(2000)
 
@@ -72,7 +87,7 @@ test('demo: registro, búsqueda, compra, historial y gestión de la orden como a
   // Cierra sesión y entra como administración
   await page.getByRole('button', { name: 'Ana Demo' }).click()
   await page.getByRole('menuitem', { name: 'Cerrar sesión' }).click()
-  await expect(page.getByRole('link', { name: 'Ingresar' })).toBeVisible()
+  await expect(page.getByRole('banner').getByRole('link', { name: 'Ingresar' })).toBeVisible()
   await pause()
   await loginAs(page, 'admin@bloom.test', 'Admin123!')
   await page.getByRole('button', { name: 'Admin Bloom' }).click()

@@ -120,3 +120,18 @@ for (const scheme of ['light', 'dark'] as const) {
     })
   })
 }
+
+test.describe('accesibilidad AA (inglés)', () => {
+  test.use({ colorScheme: 'light' })
+
+  for (const path of ['/', '/productos', '/productos/1', '/login', '/carrito']) {
+    test(`${path} sin violaciones en inglés`, async ({ page }) => {
+      await page.addInitScript(() => window.localStorage.setItem('bloom.lang', 'en'))
+      await page.goto(path)
+      await page.waitForLoadState('networkidle')
+      await expect(page.getByRole('main')).toBeVisible()
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+      expect(await violations(page)).toEqual([])
+    })
+  }
+})

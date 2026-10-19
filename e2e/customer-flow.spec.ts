@@ -33,7 +33,10 @@ test('cliente: registro, búsqueda, compra, historial y cancelación', async ({ 
   await shot(page, info, '04-detalle')
   await page.getByRole('button', { name: 'Agregar al carrito' }).click()
   await expect(page.getByRole('link', { name: 'Carrito, 1 artículo' })).toBeVisible()
-  await page.getByRole('link', { name: /Carrito/ }).click()
+  await page
+    .getByRole('banner')
+    .getByRole('link', { name: /Carrito/ })
+    .click()
   await expect(page.getByRole('heading', { name: 'Tu carrito' })).toBeVisible()
   await shot(page, info, '05-carrito')
 
@@ -88,9 +91,9 @@ test('la sesión se restaura al recargar y se cierra al salir', async ({ page })
 
   await page.getByRole('button', { name: 'Cliente Demo' }).click()
   await page.getByRole('menuitem', { name: 'Cerrar sesión' }).click()
-  await expect(page.getByRole('link', { name: 'Ingresar' })).toBeVisible()
+  await expect(page.getByRole('banner').getByRole('link', { name: 'Ingresar' })).toBeVisible()
   await page.reload()
-  await expect(page.getByRole('link', { name: 'Ingresar' })).toBeVisible()
+  await expect(page.getByRole('banner').getByRole('link', { name: 'Ingresar' })).toBeVisible()
 })
 
 test('login con credenciales incorrectas muestra el error del api', async ({ page }) => {
