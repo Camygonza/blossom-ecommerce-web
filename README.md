@@ -3,6 +3,8 @@
 Frontend del e-commerce **Bloom** (plantas, flores y guías digitales).
 React 19 · TypeScript (strict) · Redux Toolkit + RTK Query (axios) · MUI 9 · React Router 7 · React Hook Form + Zod · Vite.
 
+> **Demo en línea:** https://bloom-web-ah8o.onrender.com (plan gratuito: la primera visita puede tardar cerca de un minuto en despertar). Cuentas demo más abajo.
+
 Consume la API del repo hermano [`blossom-ecommerce-api`](https://github.com/Camygonza/blossom-ecommerce-api); los tipos de `src/api/types.ts` siguen su contrato OpenAPI (`docs/openapi.json` de ese repo).
 
 ## Cómo correrlo
