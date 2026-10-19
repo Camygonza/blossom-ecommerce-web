@@ -14,6 +14,9 @@ afterEach(() => {
 
 afterAll(() => server.close())
 
+// jsdom anuncia en-US: las pruebas parten en español (el idioma por defecto de la tienda)
+Object.defineProperty(window.navigator, 'language', { value: 'es-CO', configurable: true })
+
 // jsdom no implementa scrollTo ni matchMedia
 window.scrollTo = () => undefined
 window.matchMedia ??= ((query: string) => ({

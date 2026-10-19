@@ -1,5 +1,9 @@
 import type { OrderStatus } from '@/api/types'
 
+/**
+ * Etiquetas en español (clave de traducción). Se traducen al mostrarlas: `t(STATUS_LABEL[s])`.
+ * Las traducciones están en `en.ts` bajo estas mismas claves.
+ */
 export const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: 'Pendiente',
   PAID: 'Pagada',

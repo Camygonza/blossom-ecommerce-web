@@ -1,12 +1,14 @@
+import { useT } from '@/i18n/i18n'
 import { Fern, Fiddle, Monstera, Sunflowers, Trailing } from '@/features/products/art/motifs'
 
 /** Composición del hero: plantas de distinto porte sobre una misma línea de suelo, con flores al frente. */
 export function HeroArt() {
+  const t = useT()
   return (
     <svg
       viewBox="0 0 520 340"
       role="img"
-      aria-label="Plantas y flores ilustradas"
+      aria-label={t('Plantas y flores ilustradas')}
       style={{ width: '100%', height: 'auto' }}
     >
       <circle cx="270" cy="160" r="150" fill="#fff" opacity="0.12" />

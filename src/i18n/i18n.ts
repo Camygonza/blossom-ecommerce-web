@@ -1,10 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { readStorage, writeStorage } from '@/lib/storage'
+import { createContext, useContext } from 'react'
 import { en } from './en'
 
 export type Lang = 'es' | 'en'
-
-const KEY = 'bloom.lang'
 
 /** Variables de interpolación: `t('Hola, {name}', { name })`. */
 export type Vars = Record<string, string | number>
@@ -26,47 +23,17 @@ export function translate(lang: Lang, text: string, vars?: Vars): string {
   return interpolate(lang === 'en' ? (en[text] ?? text) : text, vars)
 }
 
-function initialLang(): Lang {
-  const stored = readStorage(KEY)
-  if (stored === 'es' || stored === 'en') return stored
-  return typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('en')
-    ? 'en'
-    : 'es'
-}
-
-interface I18nValue {
+export interface I18nValue {
   lang: Lang
   setLang: (lang: Lang) => void
   t: TFunction
 }
 
-const I18nContext = createContext<I18nValue>({
+export const I18nContext = createContext<I18nValue>({
   lang: 'es',
   setLang: () => undefined,
   t: (text, vars) => translate('es', text, vars),
 })
-
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(initialLang)
-
-  useEffect(() => {
-    document.documentElement.lang = lang
-  }, [lang])
-
-  const value = useMemo<I18nValue>(
-    () => ({
-      lang,
-      setLang: (next) => {
-        writeStorage(KEY, next)
-        setLangState(next)
-      },
-      t: (text, vars) => translate(lang, text, vars),
-    }),
-    [lang],
-  )
-
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
-}
 
 export const useI18n = () => useContext(I18nContext)
 

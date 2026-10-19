@@ -3,6 +3,7 @@ import { Alert, Box, Button, Card, CardActionArea, Stack, Typography } from '@mu
 import Grid from '@mui/material/Grid'
 import { Link as RouterLink } from 'react-router-dom'
 import { useGetCategoriesQuery, useGetProductsQuery } from '@/api/api'
+import { useT } from '@/i18n/i18n'
 import { ProductArt } from '@/features/products/art/ProductArt'
 import { ProductCard, ProductCardSkeleton } from '@/features/products/ProductCard'
 import { HeroArt } from './HeroArt'
@@ -16,13 +17,16 @@ const CATEGORY_SAMPLE: Record<number, string> = {
   5: 'Guía',
 }
 
-const PERKS = [
-  ['Para empezar fácil', 'Plantas resistentes y guías paso a paso para quien está comenzando.'],
-  ['Guías al instante', 'Los productos digitales se descargan al comprar, sin esperas.'],
-  ['Cuidado que se nota', 'Elegimos plantas sanas y herramientas que duran.'],
-] as const
-
 export function HomePage() {
+  const t = useT()
+  const perks = [
+    [
+      t('Para empezar fácil'),
+      t('Plantas resistentes y guías paso a paso para quien está comenzando.'),
+    ],
+    [t('Guías al instante'), t('Los productos digitales se descargan al comprar, sin esperas.')],
+    [t('Cuidado que se nota'), t('Elegimos plantas sanas y herramientas que duran.')],
+  ] as const
   const { data, isLoading, error } = useGetProductsQuery({ size: 4, sort: 'createdAt,desc' })
   const { data: categories = [] } = useGetCategoriesQuery()
 
@@ -58,18 +62,19 @@ export function HomePage() {
         >
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography variant="overline" sx={{ letterSpacing: 2, opacity: 0.85 }}>
-              Plantas · flores · guías
+              {t('Plantas · flores · guías')}
             </Typography>
             <Typography
               id="hero-title"
               variant="h1"
               sx={{ fontSize: { xs: '2.4rem', md: '3.6rem' }, mt: 1, lineHeight: 1.05 }}
             >
-              Verde que se siente en casa
+              {t('Verde que se siente en casa')}
             </Typography>
             <Typography sx={{ mt: 2.5, mb: 4, maxWidth: 480, fontSize: '1.1rem', opacity: 0.92 }}>
-              Plantas de interior, flores frescas y guías digitales para que tu hogar florezca, con
-              todo lo que necesitas para cuidarlas.
+              {t(
+                'Plantas de interior, flores frescas y guías digitales para que tu hogar florezca, con todo lo que necesitas para cuidarlas.',
+              )}
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <Button
@@ -79,7 +84,7 @@ export function HomePage() {
                 endIcon={<ArrowForward />}
                 sx={{ bgcolor: '#f7f3ea', color: '#1f4d38', '&:hover': { bgcolor: '#fff' } }}
               >
-                Explorar la tienda
+                {t('Explorar la tienda')}
               </Button>
               <Button
                 component={RouterLink}
@@ -92,7 +97,7 @@ export function HomePage() {
                   '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
                 }}
               >
-                Ver guías digitales
+                {t('Ver guías digitales')}
               </Button>
             </Stack>
           </Grid>
@@ -105,7 +110,7 @@ export function HomePage() {
       {categories.length > 0 && (
         <Box component="section" aria-labelledby="categorias">
           <Typography id="categorias" variant="h4" component="h2" sx={{ mb: 3 }}>
-            Compra por categoría
+            {t('Compra por categoría')}
           </Typography>
           <Grid container spacing={2.5}>
             {[...categories]
@@ -143,13 +148,15 @@ export function HomePage() {
           sx={{ alignItems: 'baseline', justifyContent: 'space-between', mb: 3 }}
         >
           <Typography id="novedades" variant="h4" component="h2">
-            Novedades
+            {t('Novedades')}
           </Typography>
           <Button component={RouterLink} to="/productos" endIcon={<ArrowForward />}>
-            Ver todo
+            {t('Ver todo')}
           </Button>
         </Stack>
-        {error && <Alert severity="warning">No pudimos cargar las novedades ahora mismo.</Alert>}
+        {error && (
+          <Alert severity="warning">{t('No pudimos cargar las novedades ahora mismo.')}</Alert>
+        )}
         <Grid container spacing={3}>
           {isLoading &&
             Array.from({ length: 4 }, (_, i) => (
@@ -165,9 +172,9 @@ export function HomePage() {
         </Grid>
       </Box>
 
-      <Box component="section" aria-label="Por qué Bloom">
+      <Box component="section" aria-label={t('Por qué Bloom')}>
         <Grid container spacing={3}>
-          {PERKS.map(([title, text]) => (
+          {perks.map(([title, text]) => (
             <Grid key={title} size={{ xs: 12, md: 4 }}>
               <Box
                 sx={{

@@ -4,10 +4,12 @@ import { useState } from 'react'
 import type { Product } from '@/api/types'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { toastShown } from '@/features/ui/uiSlice'
+import { useT } from '@/i18n/i18n'
 import { itemAdded, maxQuantityFor } from './cartSlice'
 
 /** Selector de cantidad y botón de agregar para la página de detalle. */
 export function AddToCart({ product }: { product: Product }) {
+  const t = useT()
   const dispatch = useAppDispatch()
   const inCart = useAppSelector(
     (state) => state.cart.items.find((item) => item.productId === product.id)?.quantity ?? 0,
@@ -19,7 +21,7 @@ export function AddToCart({ product }: { product: Product }) {
   if (max < 1) {
     return (
       <Button variant="contained" disabled size="large">
-        Agotado
+        {t('Agotado')}
       </Button>
     )
   }
@@ -27,8 +29,8 @@ export function AddToCart({ product }: { product: Product }) {
     return (
       <Button variant="outlined" disabled size="large">
         {product.type === 'DIGITAL'
-          ? 'Ya está en tu carrito'
-          : 'Ya tienes todo el stock en tu carrito'}
+          ? t('Ya está en tu carrito')
+          : t('Ya tienes todo el stock en tu carrito')}
       </Button>
     )
   }
@@ -40,7 +42,7 @@ export function AddToCart({ product }: { product: Product }) {
     <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
       {product.type === 'PHYSICAL' && (
         <TextField
-          label="Cantidad"
+          label={t('Cantidad')}
           type="number"
           size="small"
           value={text}
@@ -56,11 +58,11 @@ export function AddToCart({ product }: { product: Product }) {
         startIcon={<AddShoppingCart />}
         onClick={() => {
           dispatch(itemAdded({ product, quantity: safeQuantity }))
-          dispatch(toastShown(`${product.name} se agregó al carrito`, 'success'))
+          dispatch(toastShown(t('{name} se agregó al carrito', { name: product.name }), 'success'))
           setText('1')
         }}
       >
-        Agregar al carrito
+        {t('Agregar al carrito')}
       </Button>
     </Stack>
   )

@@ -16,12 +16,14 @@ import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import { useRegisterMutation } from '@/api/api'
 import { errorMessage, fieldErrors } from '@/api/errors'
 import { useAppDispatch } from '@/app/hooks'
+import { useT } from '@/i18n/i18n'
 import { toastShown } from '@/features/ui/uiSlice'
 import { registerSchema, type RegisterValues } from './schemas'
 
 const SERVER_FIELDS = ['fullName', 'email', 'password'] as const
 
 export function RegisterPage() {
+  const t = useT()
   const [registerUser, { isLoading }] = useRegisterMutation()
   const [serverError, setServerError] = useState<string | null>(null)
   const dispatch = useAppDispatch()
@@ -43,7 +45,9 @@ export function RegisterPage() {
     setServerError(null)
     try {
       const auth = await registerUser(values).unwrap()
-      dispatch(toastShown(`¡Bienvenida/o a Bloom, ${auth.user.fullName}!`, 'success'))
+      dispatch(
+        toastShown(t('¡Bienvenida/o a Bloom, {name}!', { name: auth.user.fullName }), 'success'),
+      )
       navigate(from, { replace: true })
     } catch (error) {
       const server = fieldErrors(error)
@@ -54,67 +58,69 @@ export function RegisterPage() {
           mapped = true
         }
       }
-      setServerError(mapped ? null : errorMessage(error))
+      setServerError(mapped ? null : errorMessage(error, undefined, t))
     }
   })
 
   return (
     <Paper variant="outlined" sx={{ maxWidth: 440, mx: 'auto', p: { xs: 3, sm: 4 } }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Crea tu cuenta
+        {t('Crea tu cuenta')}
       </Typography>
       <Box component="form" onSubmit={onSubmit} noValidate>
         <Stack spacing={2.5}>
           {serverError && <Alert severity="error">{serverError}</Alert>}
           <TextField
-            label="Nombre completo"
+            label={t('Nombre completo')}
             autoComplete="name"
             autoFocus
             fullWidth
             {...register('fullName')}
             error={Boolean(errors.fullName)}
-            helperText={errors.fullName?.message}
+            helperText={t(errors.fullName?.message ?? '')}
           />
           <TextField
-            label="Correo"
+            label={t('Correo')}
             type="email"
             autoComplete="email"
             fullWidth
             {...register('email')}
             error={Boolean(errors.email)}
-            helperText={errors.email?.message}
+            helperText={t(errors.email?.message ?? '')}
           />
           <TextField
-            label="Contraseña"
+            label={t('Contraseña')}
             type="password"
             autoComplete="new-password"
             fullWidth
             {...register('password')}
             error={Boolean(errors.password)}
             helperText={
-              errors.password?.message ?? '8+ caracteres con mayúscula, minúscula, número y símbolo'
+              errors.password?.message
+                ? t(errors.password.message)
+                : t('8+ caracteres con mayúscula, minúscula, número y símbolo')
             }
           />
           <TextField
-            label="Confirma la contraseña"
+            label={t('Confirma la contraseña')}
             type="password"
             autoComplete="new-password"
             fullWidth
             {...register('confirmPassword')}
             error={Boolean(errors.confirmPassword)}
-            helperText={errors.confirmPassword?.message}
+            helperText={t(errors.confirmPassword?.message ?? '')}
           />
           <Button type="submit" variant="contained" size="large" disabled={isLoading}>
             {isLoading ? (
-              <CircularProgress size={22} aria-label="Creando cuenta" />
+              <CircularProgress size={22} aria-label={t('Creando cuenta')} />
             ) : (
-              'Crear cuenta'
+              t('Crear cuenta')
             )}
           </Button>
           <Typography variant="body2" sx={{ textAlign: 'center' }}>
-            ¿Ya tienes cuenta?{' '}
+            {t('¿Ya tienes cuenta?')}{' '}
             <Link component={RouterLink} to="/login" state={location.state}>
-              Ingresa
+              {t('Ingresa')}
             </Link>
           </Typography>
         </Stack>

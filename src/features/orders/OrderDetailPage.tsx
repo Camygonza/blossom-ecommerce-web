@@ -23,11 +23,13 @@ import { errorMessage } from '@/api/errors'
 import { useAppDispatch } from '@/app/hooks'
 import { EmptyState } from '@/components/EmptyState'
 import { toastShown } from '@/features/ui/uiSlice'
+import { useI18n } from '@/i18n/i18n'
 import { formatDate, formatMoney } from '@/lib/format'
 import { OrderStatusChip } from './OrderStatusChip'
 import { PROGRESS, STATUS_LABEL } from './status'
 
 export function OrderDetailPage() {
+  const { lang, t } = useI18n()
   const { id } = useParams()
   const orderId = Number(id)
   const validId = Number.isInteger(orderId) && orderId > 0
@@ -45,7 +47,7 @@ export function OrderDetailPage() {
       startIcon={<ArrowBack />}
       sx={{ alignSelf: 'flex-start' }}
     >
-      Mis órdenes
+      {t('Mis órdenes')}
     </Button>
   )
 
@@ -54,8 +56,8 @@ export function OrderDetailPage() {
       <Stack spacing={2}>
         {back}
         <EmptyState
-          title="No encontramos esta orden"
-          description="Revisa el enlace o vuelve a tus órdenes."
+          title={t('No encontramos esta orden')}
+          description={t('Revisa el enlace o vuelve a tus órdenes.')}
         />
       </Stack>
     )
@@ -68,18 +70,18 @@ export function OrderDetailPage() {
           severity="error"
           action={
             <Button color="inherit" size="small" onClick={() => refetch()}>
-              Reintentar
+              {t('Reintentar')}
             </Button>
           }
         >
-          {errorMessage(error, 'No pudimos cargar la orden.')}
+          {errorMessage(error, t('No pudimos cargar la orden.'), t)}
         </Alert>
       </Stack>
     )
   }
   if (isLoading || !order) {
     return (
-      <Stack spacing={2} aria-busy="true" aria-label="Cargando orden">
+      <Stack spacing={2} aria-busy="true" aria-label={t('Cargando orden')}>
         {back}
         <Skeleton variant="rounded" height={260} />
       </Stack>
@@ -91,10 +93,10 @@ export function OrderDetailPage() {
     try {
       await cancelOrder(order.id).unwrap()
       setConfirming(false)
-      dispatch(toastShown(`Orden #${order.id} cancelada`, 'info'))
+      dispatch(toastShown(t('Orden #{id} cancelada', { id: order.id }), 'info'))
     } catch (err) {
       setConfirming(false)
-      setCancelError(errorMessage(err, 'No pudimos cancelar la orden.'))
+      setCancelError(errorMessage(err, t('No pudimos cancelar la orden.'), t))
     }
   }
 
@@ -103,22 +105,26 @@ export function OrderDetailPage() {
   return (
     <Stack spacing={3}>
       {back}
-      {placed && <Alert severity="success">¡Gracias por tu compra! Recibimos tu orden.</Alert>}
+      {placed && (
+        <Alert severity="success">{t('¡Gracias por tu compra! Recibimos tu orden.')}</Alert>
+      )}
       {cancelError && <Alert severity="error">{cancelError}</Alert>}
 
       <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
         <Typography variant="h3" component="h1">
-          Orden #{order.id}
+          {t('Orden #{id}', { id: order.id })}
         </Typography>
         <OrderStatusChip status={order.status} />
       </Stack>
-      <Typography color="text.secondary">Realizada el {formatDate(order.createdAt)}</Typography>
+      <Typography color="text.secondary">
+        {t('Realizada el {date}', { date: formatDate(order.createdAt, lang) })}
+      </Typography>
 
       {order.status !== 'CANCELLED' && (
-        <Stepper activeStep={activeStep} alternativeLabel aria-label="Progreso de la orden">
+        <Stepper activeStep={activeStep} alternativeLabel aria-label={t('Progreso de la orden')}>
           {PROGRESS.map((step) => (
             <Step key={step} completed={PROGRESS.indexOf(step) <= activeStep}>
-              <StepLabel>{STATUS_LABEL[step]}</StepLabel>
+              <StepLabel>{t(STATUS_LABEL[step])}</StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -149,9 +155,9 @@ export function OrderDetailPage() {
           ))}
           <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
             <Typography variant="h6" component="p">
-              Total
+              {t('Total')}
             </Typography>
-            <Typography variant="h6" component="p" aria-label="Total de la orden">
+            <Typography variant="h6" component="p" aria-label={t('Total de la orden')}>
               {formatMoney(order.total)}
             </Typography>
           </Stack>
@@ -165,21 +171,23 @@ export function OrderDetailPage() {
           sx={{ alignSelf: 'flex-start' }}
           onClick={() => setConfirming(true)}
         >
-          Cancelar orden
+          {t('Cancelar orden')}
         </Button>
       )}
 
       <Dialog open={confirming} onClose={() => setConfirming(false)} aria-labelledby="cancel-title">
-        <DialogTitle id="cancel-title">¿Cancelar la orden #{order.id}?</DialogTitle>
+        <DialogTitle id="cancel-title">
+          {t('¿Cancelar la orden #{id}?', { id: order.id })}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Los productos volverán al inventario. Esta acción no se puede deshacer.
+            {t('Los productos volverán al inventario. Esta acción no se puede deshacer.')}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirming(false)}>Conservar orden</Button>
+          <Button onClick={() => setConfirming(false)}>{t('Conservar orden')}</Button>
           <Button color="error" onClick={confirmCancel} disabled={cancelling}>
-            Sí, cancelar
+            {t('Sí, cancelar')}
           </Button>
         </DialogActions>
       </Dialog>

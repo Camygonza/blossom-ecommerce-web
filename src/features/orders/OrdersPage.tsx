@@ -15,14 +15,18 @@ import { useGetMyOrdersQuery } from '@/api/api'
 import { errorMessage } from '@/api/errors'
 import { AppPagination } from '@/components/AppPagination'
 import { EmptyState } from '@/components/EmptyState'
+import { useI18n } from '@/i18n/i18n'
 import { formatDate, formatMoney } from '@/lib/format'
 import { OrderStatusChip } from './OrderStatusChip'
 
 const PAGE_SIZE = 10
 
 export function OrdersPage() {
+  const { lang, t } = useI18n()
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
+  const itemsLabel = (count: number) =>
+    count === 1 ? t('1 artículo') : t('{count} artículos', { count })
   const { data, error, isLoading, refetch } = useGetMyOrdersQuery({
     page: page - 1,
     size: PAGE_SIZE,
@@ -31,7 +35,7 @@ export function OrdersPage() {
   return (
     <Stack spacing={3}>
       <Typography variant="h3" component="h1">
-        Mis órdenes
+        {t('Mis órdenes')}
       </Typography>
 
       {error && (
@@ -39,16 +43,16 @@ export function OrdersPage() {
           severity="error"
           action={
             <Button color="inherit" size="small" onClick={() => refetch()}>
-              Reintentar
+              {t('Reintentar')}
             </Button>
           }
         >
-          {errorMessage(error, 'No pudimos cargar tus órdenes.')}
+          {errorMessage(error, t('No pudimos cargar tus órdenes.'), t)}
         </Alert>
       )}
 
       {isLoading && (
-        <Stack spacing={2} aria-busy="true" aria-label="Cargando órdenes">
+        <Stack spacing={2} aria-busy="true" aria-label={t('Cargando órdenes')}>
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} variant="rounded" height={88} />
           ))}
@@ -57,9 +61,9 @@ export function OrdersPage() {
 
       {data && data.content.length === 0 && (
         <EmptyState
-          title="Aún no tienes órdenes"
-          description="Cuando compres algo, lo verás aquí con su estado."
-          actionLabel="Ir a la tienda"
+          title={t('Aún no tienes órdenes')}
+          description={t('Cuando compres algo, lo verás aquí con su estado.')}
+          actionLabel={t('Ir a la tienda')}
           onAction={() => navigate('/productos')}
         />
       )}
@@ -80,10 +84,12 @@ export function OrdersPage() {
                     }}
                   >
                     <Box>
-                      <Typography sx={{ fontWeight: 600 }}>Orden #{order.id}</Typography>
+                      <Typography sx={{ fontWeight: 600 }}>
+                        {t('Orden #{id}', { id: order.id })}
+                      </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {formatDate(order.createdAt)} ·{' '}
-                        {order.items.reduce((sum, item) => sum + item.quantity, 0)} artículos
+                        {formatDate(order.createdAt, lang)} ·{' '}
+                        {itemsLabel(order.items.reduce((sum, item) => sum + item.quantity, 0))}
                       </Typography>
                     </Box>
                     <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
@@ -102,7 +108,7 @@ export function OrdersPage() {
               count={data.totalPages}
               page={page}
               onChange={(next) => setPage(next)}
-              label="Paginación de órdenes"
+              label={t('Paginación de órdenes')}
             />
           )}
         </>

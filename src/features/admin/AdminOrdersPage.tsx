@@ -24,11 +24,13 @@ import { EmptyState } from '@/components/EmptyState'
 import { OrderStatusChip } from '@/features/orders/OrderStatusChip'
 import { NEXT_STATUSES, STATUS_LABEL } from '@/features/orders/status'
 import { toastShown } from '@/features/ui/uiSlice'
+import { useI18n } from '@/i18n/i18n'
 import { formatDate, formatMoney } from '@/lib/format'
 
 const PAGE_SIZE = 10
 
 export function AdminOrdersPage() {
+  const { lang, t } = useI18n()
   const dispatch = useAppDispatch()
   const [status, setStatus] = useState<OrderStatus | ''>('')
   const [page, setPage] = useState(1)
@@ -42,21 +44,26 @@ export function AdminOrdersPage() {
   const change = async (id: number, next: OrderStatus) => {
     try {
       await updateStatus({ id, status: next }).unwrap()
-      dispatch(toastShown(`Orden #${id}: ${STATUS_LABEL[next].toLowerCase()}`, 'success'))
+      dispatch(
+        toastShown(
+          t('Orden #{id}: {status}', { id, status: t(STATUS_LABEL[next]).toLowerCase() }),
+          'success',
+        ),
+      )
     } catch (err) {
-      dispatch(toastShown(errorMessage(err, 'No pudimos cambiar el estado.'), 'error'))
+      dispatch(toastShown(errorMessage(err, t('No pudimos cambiar el estado.'), t), 'error'))
     }
   }
 
   return (
     <Stack spacing={3}>
       <Typography variant="h3" component="h1">
-        Órdenes
+        {t('Órdenes')}
       </Typography>
 
       <TextField
         select
-        label="Filtrar por estado"
+        label={t('Filtrar por estado')}
         size="small"
         value={status}
         onChange={(e) => {
@@ -65,10 +72,10 @@ export function AdminOrdersPage() {
         }}
         sx={{ maxWidth: 260 }}
       >
-        <MenuItem value="">Todos</MenuItem>
+        <MenuItem value="">{t('Todos')}</MenuItem>
         {(Object.keys(STATUS_LABEL) as OrderStatus[]).map((s) => (
           <MenuItem key={s} value={s}>
-            {STATUS_LABEL[s]}
+            {t(STATUS_LABEL[s])}
           </MenuItem>
         ))}
       </TextField>
@@ -78,30 +85,30 @@ export function AdminOrdersPage() {
           severity="error"
           action={
             <Button color="inherit" size="small" onClick={() => refetch()}>
-              Reintentar
+              {t('Reintentar')}
             </Button>
           }
         >
-          {errorMessage(error, 'No pudimos cargar las órdenes.')}
+          {errorMessage(error, t('No pudimos cargar las órdenes.'), t)}
         </Alert>
       )}
-      {isLoading && <Skeleton variant="rounded" height={320} aria-label="Cargando órdenes" />}
+      {isLoading && <Skeleton variant="rounded" height={320} aria-label={t('Cargando órdenes')} />}
       {data && data.content.length === 0 && (
-        <EmptyState title="Sin órdenes" description="No hay órdenes con ese estado." />
+        <EmptyState title={t('Sin órdenes')} description={t('No hay órdenes con ese estado.')} />
       )}
 
       {data && data.content.length > 0 && (
         <>
           <TableContainer component={Paper} variant="outlined">
-            <Table size="small" aria-label="Órdenes">
+            <Table size="small" aria-label={t('Órdenes')}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Orden</TableCell>
-                  <TableCell>Cliente</TableCell>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell align="right">Total</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell>Cambiar estado</TableCell>
+                  <TableCell>{t('Orden')}</TableCell>
+                  <TableCell>{t('Cliente')}</TableCell>
+                  <TableCell>{t('Fecha')}</TableCell>
+                  <TableCell align="right">{t('Total')}</TableCell>
+                  <TableCell>{t('Estado')}</TableCell>
+                  <TableCell>{t('Cambiar estado')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -111,7 +118,7 @@ export function AdminOrdersPage() {
                     <TableRow key={order.id} hover>
                       <TableCell>#{order.id}</TableCell>
                       <TableCell>{order.customerEmail}</TableCell>
-                      <TableCell>{formatDate(order.createdAt)}</TableCell>
+                      <TableCell>{formatDate(order.createdAt, lang)}</TableCell>
                       <TableCell align="right">{formatMoney(order.total)}</TableCell>
                       <TableCell>
                         <OrderStatusChip status={order.status} />
@@ -129,9 +136,11 @@ export function AdminOrdersPage() {
                             slotProps={{
                               select: {
                                 displayEmpty: true,
-                                renderValue: () => 'Elegir…',
+                                renderValue: () => t('Elegir…'),
                                 SelectDisplayProps: {
-                                  'aria-label': `Cambiar estado de la orden #${order.id}`,
+                                  'aria-label': t('Cambiar estado de la orden #{id}', {
+                                    id: order.id,
+                                  }),
                                 },
                               },
                             }}
@@ -139,7 +148,7 @@ export function AdminOrdersPage() {
                           >
                             {next.map((s) => (
                               <MenuItem key={s} value={s}>
-                                {STATUS_LABEL[s]}
+                                {t(STATUS_LABEL[s])}
                               </MenuItem>
                             ))}
                           </TextField>
@@ -156,7 +165,7 @@ export function AdminOrdersPage() {
               count={data.totalPages}
               page={page}
               onChange={(next) => setPage(next)}
-              label="Paginación de órdenes"
+              label={t('Paginación de órdenes')}
             />
           )}
         </>

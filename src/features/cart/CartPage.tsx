@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { EmptyState } from '@/components/EmptyState'
 import { ProductImage } from '@/features/products/art/ProductImage'
 import { toastShown } from '@/features/ui/uiSlice'
+import { useT } from '@/i18n/i18n'
 import { formatMoney } from '@/lib/format'
 import {
   cartCleared,
@@ -30,6 +31,7 @@ import {
 } from './cartSlice'
 
 export function CartPage() {
+  const t = useT()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const items = useAppSelector((state) => state.cart.items)
@@ -42,9 +44,9 @@ export function CartPage() {
   if (items.length === 0) {
     return (
       <EmptyState
-        title="Tu carrito está vacío"
-        description="Agrega plantas, flores o guías para empezar."
-        actionLabel="Explorar la tienda"
+        title={t('Tu carrito está vacío')}
+        description={t('Agrega plantas, flores o guías para empezar.')}
+        actionLabel={t('Explorar la tienda')}
         onAction={() => navigate('/productos')}
       />
     )
@@ -59,7 +61,7 @@ export function CartPage() {
     }
     if (user.role !== 'CUSTOMER') {
       setCheckoutError(
-        'Las cuentas de administración no realizan compras. Ingresa con una cuenta de cliente.',
+        t('Las cuentas de administración no realizan compras. Ingresa con una cuenta de cliente.'),
       )
       return
     }
@@ -68,17 +70,17 @@ export function CartPage() {
         items: items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
       }).unwrap()
       dispatch(cartCleared())
-      dispatch(toastShown(`Orden #${order.id} creada`, 'success'))
+      dispatch(toastShown(t('Orden #{id} creada', { id: order.id }), 'success'))
       navigate(`/ordenes/${order.id}`, { state: { placed: true } })
     } catch (error) {
-      setCheckoutError(errorMessage(error, 'No pudimos crear tu orden.'))
+      setCheckoutError(errorMessage(error, t('No pudimos crear tu orden.'), t))
     }
   }
 
   return (
     <Stack spacing={3}>
       <Typography variant="h3" component="h1">
-        Tu carrito
+        {t('Tu carrito')}
       </Typography>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 8 }}>
@@ -107,12 +109,12 @@ export function CartPage() {
                       {item.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {formatMoney(item.price)} c/u
+                      {t('{price} c/u', { price: formatMoney(item.price) })}
                     </Typography>
                     <Stack direction="row" sx={{ alignItems: 'center', mt: 1 }}>
                       <IconButton
                         size="small"
-                        aria-label={`Quitar una unidad de ${item.name}`}
+                        aria-label={t('Quitar una unidad de {name}', { name: item.name })}
                         disabled={item.quantity <= 1}
                         onClick={() =>
                           dispatch(
@@ -124,14 +126,14 @@ export function CartPage() {
                       </IconButton>
                       <Typography
                         component="span"
-                        aria-label={`Cantidad de ${item.name}`}
+                        aria-label={t('Cantidad de {name}', { name: item.name })}
                         sx={{ minWidth: 32, textAlign: 'center' }}
                       >
                         {item.quantity}
                       </Typography>
                       <IconButton
                         size="small"
-                        aria-label={`Agregar una unidad de ${item.name}`}
+                        aria-label={t('Agregar una unidad de {name}', { name: item.name })}
                         disabled={item.quantity >= item.maxQuantity}
                         onClick={() =>
                           dispatch(
@@ -148,7 +150,7 @@ export function CartPage() {
                       {formatMoney(item.price * item.quantity)}
                     </Typography>
                     <IconButton
-                      aria-label={`Eliminar ${item.name} del carrito`}
+                      aria-label={t('Eliminar {name} del carrito', { name: item.name })}
                       onClick={() => dispatch(itemRemoved(item.productId))}
                     >
                       <DeleteOutline />
@@ -162,18 +164,18 @@ export function CartPage() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper variant="outlined" sx={{ p: 3, position: { md: 'sticky' }, top: { md: 88 } }}>
             <Typography variant="h5" component="h2" gutterBottom>
-              Resumen
+              {t('Resumen')}
             </Typography>
             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
               <Typography color="text.secondary">
-                {count} {count === 1 ? 'artículo' : 'artículos'}
+                {count === 1 ? t('1 artículo') : t('{count} artículos', { count })}
               </Typography>
-              <Typography variant="h6" component="p" aria-label="Total del carrito">
+              <Typography variant="h6" component="p" aria-label={t('Total del carrito')}>
                 {formatMoney(total)}
               </Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1 }}>
-              El precio final se confirma al crear la orden.
+              {t('El precio final se confirma al crear la orden.')}
             </Typography>
             {checkoutError && (
               <Alert severity="error" sx={{ mt: 2 }}>
@@ -189,15 +191,15 @@ export function CartPage() {
               disabled={isLoading}
             >
               {isLoading ? (
-                <CircularProgress size={22} aria-label="Creando orden" />
+                <CircularProgress size={22} aria-label={t('Creando orden')} />
               ) : user ? (
-                'Finalizar compra'
+                t('Finalizar compra')
               ) : (
-                'Ingresa para comprar'
+                t('Ingresa para comprar')
               )}
             </Button>
             <Button fullWidth sx={{ mt: 1 }} onClick={() => dispatch(cartCleared())}>
-              Vaciar carrito
+              {t('Vaciar carrito')}
             </Button>
           </Paper>
         </Grid>

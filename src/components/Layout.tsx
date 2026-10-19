@@ -21,7 +21,7 @@ import { Link as RouterLink, Outlet, useNavigate } from 'react-router-dom'
 import { useLogoutMutation } from '@/api/api'
 import { useColorMode } from '@/app/colorMode'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { useI18n } from '@/i18n/i18n'
+import { useI18n, useT } from '@/i18n/i18n'
 import { selectCartCount } from '@/features/cart/cartSlice'
 import { toastShown } from '@/features/ui/uiSlice'
 import { Logo } from './Logo'
@@ -47,13 +47,16 @@ function LanguageButton() {
 }
 
 function CartButton() {
+  const t = useT()
   const count = useAppSelector(selectCartCount)
   return (
     <IconButton
       component={RouterLink}
       to="/carrito"
       color="inherit"
-      aria-label={`Carrito, ${count} ${count === 1 ? 'artículo' : 'artículos'}`}
+      aria-label={
+        count === 1 ? t('Carrito, 1 artículo') : t('Carrito, {count} artículos', { count })
+      }
     >
       <Badge badgeContent={count} color="secondary" max={99}>
         <ShoppingCartOutlined />
@@ -63,6 +66,7 @@ function CartButton() {
 }
 
 function UserMenu() {
+  const t = useT()
   const user = useAppSelector((state) => state.auth.user)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -73,7 +77,7 @@ function UserMenu() {
     return (
       <Box sx={{ display: 'flex', gap: 1 }}>
         <Button component={RouterLink} to="/login" color="inherit">
-          Ingresar
+          {t('Ingresar')}
         </Button>
         <Button
           component={RouterLink}
@@ -82,7 +86,7 @@ function UserMenu() {
           color="secondary"
           sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
         >
-          Crear cuenta
+          {t('Crear cuenta')}
         </Button>
       </Box>
     )
@@ -91,7 +95,7 @@ function UserMenu() {
   const onLogout = async () => {
     setAnchor(null)
     await logout()
-    dispatch(toastShown('Sesión cerrada. ¡Hasta pronto!', 'info'))
+    dispatch(toastShown(t('Sesión cerrada. ¡Hasta pronto!'), 'info'))
     navigate('/')
   }
 
@@ -113,7 +117,7 @@ function UserMenu() {
       <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
         {user.role === 'CUSTOMER' && (
           <MenuItem component={RouterLink} to="/ordenes" onClick={() => setAnchor(null)}>
-            Mis órdenes
+            {t('Mis órdenes')}
           </MenuItem>
         )}
         {user.role === 'ADMIN' && [
@@ -123,7 +127,7 @@ function UserMenu() {
             to="/admin/productos"
             onClick={() => setAnchor(null)}
           >
-            Gestionar productos
+            {t('Gestionar productos')}
           </MenuItem>,
           <MenuItem
             key="orders"
@@ -131,10 +135,10 @@ function UserMenu() {
             to="/admin/ordenes"
             onClick={() => setAnchor(null)}
           >
-            Gestionar órdenes
+            {t('Gestionar órdenes')}
           </MenuItem>,
         ]}
-        <MenuItem onClick={onLogout}>Cerrar sesión</MenuItem>
+        <MenuItem onClick={onLogout}>{t('Cerrar sesión')}</MenuItem>
       </Menu>
     </>
   )
@@ -142,6 +146,7 @@ function UserMenu() {
 
 /** Buscador de la cabecera: lleva al catálogo con el texto como filtro de nombre. */
 function SearchBox() {
+  const t = useT()
   const navigate = useNavigate()
   const [text, setText] = useState('')
 
@@ -171,7 +176,7 @@ function SearchBox() {
         borderColor: 'divider',
         '&:focus-within': {
           borderColor: 'primary.main',
-          boxShadow: (t) => `0 0 0 3px ${t.palette.primary.main}33`,
+          boxShadow: (theme) => `0 0 0 3px ${theme.palette.primary.main}33`,
         },
       }}
     >
@@ -179,23 +184,23 @@ function SearchBox() {
       <InputBase
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Buscar plantas, flores, guías…"
-        slotProps={{ input: { 'aria-label': 'Buscar en la tienda' } }}
+        placeholder={t('Buscar plantas, flores, guías…')}
+        slotProps={{ input: { 'aria-label': t('Buscar en la tienda') } }}
         sx={{ flexGrow: 1, fontSize: '0.95rem' }}
       />
     </Box>
   )
 }
 
-const CATEGORY_LINKS: [string, string][] = [
-  ['Plantas de interior', '/productos?categoria=1'],
-  ['Flores', '/productos?categoria=2'],
-  ['Macetas y decoración', '/productos?categoria=3'],
-  ['Herramientas', '/productos?categoria=4'],
-  ['Guías digitales', '/productos?categoria=5'],
-]
-
 function Footer() {
+  const t = useT()
+  const categoryLinks: [string, string][] = [
+    [t('Plantas de interior'), '/productos?categoria=1'],
+    [t('Flores'), '/productos?categoria=2'],
+    [t('Macetas y decoración'), '/productos?categoria=3'],
+    [t('Herramientas'), '/productos?categoria=4'],
+    [t('Guías digitales'), '/productos?categoria=5'],
+  ]
   const user = useAppSelector((state) => state.auth.user)
   const heading = { fontWeight: 700, mb: 1.5, fontFamily: '"Fraunces", Georgia, serif' } as const
   const link = {
@@ -224,22 +229,22 @@ function Footer() {
               <Logo />
             </Box>
             <Typography color="text.secondary" sx={{ maxWidth: 340 }}>
-              Plantas de interior, flores y guías digitales para que tu hogar florezca.
+              {t('Plantas de interior, flores y guías digitales para que tu hogar florezca.')}
             </Typography>
           </Box>
-          <Box component="nav" aria-label="Categorías">
+          <Box component="nav" aria-label={t('Categorías')}>
             <Typography component="p" sx={heading}>
-              Tienda
+              {t('Tienda')}
             </Typography>
-            {CATEGORY_LINKS.map(([label, to]) => (
+            {categoryLinks.map(([label, to]) => (
               <Link key={to} component={RouterLink} to={to} sx={link}>
                 {label}
               </Link>
             ))}
           </Box>
-          <Box component="nav" aria-label="Cuenta">
+          <Box component="nav" aria-label={t('Cuenta')}>
             <Typography component="p" sx={heading}>
-              Tu cuenta
+              {t('Tu cuenta')}
             </Typography>
             {user ? (
               <Link
@@ -247,25 +252,25 @@ function Footer() {
                 to={user.role === 'ADMIN' ? '/admin/ordenes' : '/ordenes'}
                 sx={link}
               >
-                {user.role === 'ADMIN' ? 'Gestionar órdenes' : 'Mis órdenes'}
+                {user.role === 'ADMIN' ? t('Gestionar órdenes') : t('Mis órdenes')}
               </Link>
             ) : (
               <>
                 <Link component={RouterLink} to="/login" sx={link}>
-                  Ingresar
+                  {t('Ingresar')}
                 </Link>
                 <Link component={RouterLink} to="/registro" sx={link}>
-                  Crear cuenta
+                  {t('Crear cuenta')}
                 </Link>
               </>
             )}
             <Link component={RouterLink} to="/carrito" sx={link}>
-              Carrito
+              {t('Carrito')}
             </Link>
           </Box>
         </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
-          Bloom · Proyecto de demostración: los pagos y envíos son simulados.
+          {t('Bloom · Proyecto de demostración: los pagos y envíos son simulados.')}
         </Typography>
       </Container>
     </Box>
@@ -273,6 +278,7 @@ function Footer() {
 }
 
 export function Layout() {
+  const t = useT()
   const { mode, toggle } = useColorMode()
 
   return (
@@ -293,7 +299,7 @@ export function Layout() {
           },
         }}
       >
-        Saltar al contenido
+        {t('Saltar al contenido')}
       </Box>
       <AppBar
         position="sticky"
@@ -305,7 +311,7 @@ export function Layout() {
           <Box
             component={RouterLink}
             to="/"
-            aria-label="Bloom, inicio"
+            aria-label={t('Bloom, inicio')}
             sx={{ color: 'primary.main', textDecoration: 'none' }}
           >
             <Logo />
@@ -316,14 +322,14 @@ export function Layout() {
             color="inherit"
             sx={{ ml: { xs: 0, sm: 2 } }}
           >
-            Tienda
+            {t('Tienda')}
           </Button>
           <SearchBox />
           <Box sx={{ flexGrow: 1 }} />
           <IconButton
             onClick={toggle}
             color="inherit"
-            aria-label={mode === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            aria-label={mode === 'dark' ? t('Cambiar a modo claro') : t('Cambiar a modo oscuro')}
           >
             {mode === 'dark' ? <LightModeOutlined /> : <DarkModeOutlined />}
           </IconButton>

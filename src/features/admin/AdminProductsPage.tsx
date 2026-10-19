@@ -31,12 +31,14 @@ import { AppPagination } from '@/components/AppPagination'
 import { EmptyState } from '@/components/EmptyState'
 import { toastShown } from '@/features/ui/uiSlice'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useT } from '@/i18n/i18n'
 import { formatMoney } from '@/lib/format'
 import { ProductFormDialog } from './ProductFormDialog'
 
 const PAGE_SIZE = 10
 
 export function AdminProductsPage() {
+  const t = useT()
   const dispatch = useAppDispatch()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -55,9 +57,9 @@ export function AdminProductsPage() {
     if (!toDelete) return
     try {
       await deleteProduct(toDelete.id).unwrap()
-      dispatch(toastShown(`«${toDelete.name}» eliminado`, 'success'))
+      dispatch(toastShown(t('«{name}» eliminado', { name: toDelete.name }), 'success'))
     } catch (err) {
-      dispatch(toastShown(errorMessage(err, 'No pudimos eliminar el producto.'), 'error'))
+      dispatch(toastShown(errorMessage(err, t('No pudimos eliminar el producto.'), t), 'error'))
     } finally {
       setToDelete(null)
     }
@@ -70,15 +72,15 @@ export function AdminProductsPage() {
         sx={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}
       >
         <Typography variant="h3" component="h1">
-          Productos
+          {t('Productos')}
         </Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setEditing('new')}>
-          Nuevo producto
+          {t('Nuevo producto')}
         </Button>
       </Stack>
 
       <TextField
-        label="Buscar producto"
+        label={t('Buscar producto')}
         type="search"
         size="small"
         value={search}
@@ -94,30 +96,35 @@ export function AdminProductsPage() {
           severity="error"
           action={
             <Button color="inherit" size="small" onClick={() => refetch()}>
-              Reintentar
+              {t('Reintentar')}
             </Button>
           }
         >
-          {errorMessage(error, 'No pudimos cargar los productos.')}
+          {errorMessage(error, t('No pudimos cargar los productos.'), t)}
         </Alert>
       )}
-      {isLoading && <Skeleton variant="rounded" height={320} aria-label="Cargando productos" />}
+      {isLoading && (
+        <Skeleton variant="rounded" height={320} aria-label={t('Cargando productos')} />
+      )}
       {data && data.content.length === 0 && (
-        <EmptyState title="Sin resultados" description="No hay productos con ese nombre." />
+        <EmptyState
+          title={t('Sin resultados')}
+          description={t('No hay productos con ese nombre.')}
+        />
       )}
 
       {data && data.content.length > 0 && (
         <>
           <TableContainer component={Paper} variant="outlined">
-            <Table size="small" aria-label="Productos">
+            <Table size="small" aria-label={t('Productos')}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Categoría</TableCell>
-                  <TableCell>Tipo</TableCell>
-                  <TableCell align="right">Precio</TableCell>
-                  <TableCell align="right">Stock</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('Nombre')}</TableCell>
+                  <TableCell>{t('Categoría')}</TableCell>
+                  <TableCell>{t('Tipo')}</TableCell>
+                  <TableCell align="right">{t('Precio')}</TableCell>
+                  <TableCell align="right">{t('Stock')}</TableCell>
+                  <TableCell align="right">{t('Acciones')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -125,20 +132,22 @@ export function AdminProductsPage() {
                   <TableRow key={product.id} hover>
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.category.name}</TableCell>
-                    <TableCell>{product.type === 'PHYSICAL' ? 'Físico' : 'Digital'}</TableCell>
+                    <TableCell>
+                      {product.type === 'PHYSICAL' ? t('Físico') : t('Digital')}
+                    </TableCell>
                     <TableCell align="right">{formatMoney(product.price)}</TableCell>
                     <TableCell align="right">
                       {product.type === 'PHYSICAL' ? product.stock : '—'}
                     </TableCell>
                     <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
                       <IconButton
-                        aria-label={`Editar ${product.name}`}
+                        aria-label={t('Editar {name}', { name: product.name })}
                         onClick={() => setEditing(product)}
                       >
                         <EditOutlined />
                       </IconButton>
                       <IconButton
-                        aria-label={`Eliminar ${product.name}`}
+                        aria-label={t('Eliminar {name}', { name: product.name })}
                         onClick={() => setToDelete(product)}
                       >
                         <DeleteOutline />
@@ -154,7 +163,7 @@ export function AdminProductsPage() {
               count={data.totalPages}
               page={page}
               onChange={(next) => setPage(next)}
-              label="Paginación de productos"
+              label={t('Paginación de productos')}
             />
           )}
         </>
@@ -172,17 +181,20 @@ export function AdminProductsPage() {
         onClose={() => setToDelete(null)}
         aria-labelledby="delete-title"
       >
-        <DialogTitle id="delete-title">¿Eliminar «{toDelete?.name}»?</DialogTitle>
+        <DialogTitle id="delete-title">
+          {t('¿Eliminar «{name}»?', { name: toDelete?.name ?? '' })}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Si el producto ya figura en órdenes no se puede eliminar. Esta acción no se puede
-            deshacer.
+            {t(
+              'Si el producto ya figura en órdenes no se puede eliminar. Esta acción no se puede deshacer.',
+            )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setToDelete(null)}>Cancelar</Button>
+          <Button onClick={() => setToDelete(null)}>{t('Cancelar')}</Button>
           <Button color="error" onClick={confirmDelete} disabled={deleting}>
-            Eliminar
+            {t('Eliminar')}
           </Button>
         </DialogActions>
       </Dialog>

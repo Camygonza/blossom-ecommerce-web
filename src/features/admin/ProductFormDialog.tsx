@@ -21,6 +21,7 @@ import { errorMessage } from '@/api/errors'
 import type { Product } from '@/api/types'
 import { useAppDispatch } from '@/app/hooks'
 import { toastShown } from '@/features/ui/uiSlice'
+import { useT } from '@/i18n/i18n'
 import {
   emptyProductForm,
   productFormSchema,
@@ -36,6 +37,7 @@ interface Props {
 }
 
 export function ProductFormDialog({ product, onClose }: Props) {
+  const t = useT()
   const editing = Boolean(product)
   const dispatch = useAppDispatch()
   const { data: categories = [] } = useGetCategoriesQuery()
@@ -63,14 +65,14 @@ export function ProductFormDialog({ product, onClose }: Props) {
           id: product.id,
           data: toProductInput(values, product.version),
         }).unwrap()
-        dispatch(toastShown(`«${values.name}» actualizado`, 'success'))
+        dispatch(toastShown(t('«{name}» actualizado', { name: values.name }), 'success'))
       } else {
         await createProduct(toProductInput(values)).unwrap()
-        dispatch(toastShown(`«${values.name}» creado`, 'success'))
+        dispatch(toastShown(t('«{name}» creado', { name: values.name }), 'success'))
       }
       onClose()
     } catch (error) {
-      setServerError(errorMessage(error, 'No pudimos guardar el producto.'))
+      setServerError(errorMessage(error, t('No pudimos guardar el producto.'), t))
     }
   })
 
@@ -78,7 +80,7 @@ export function ProductFormDialog({ product, onClose }: Props) {
     <Dialog open onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="product-form-title">
       <form onSubmit={onSubmit} noValidate>
         <DialogTitle id="product-form-title">
-          {editing ? 'Editar producto' : 'Nuevo producto'}
+          {editing ? t('Editar producto') : t('Nuevo producto')}
         </DialogTitle>
         <DialogContent>
           <Stack spacing={2.5} sx={{ pt: 1 }}>
@@ -89,38 +91,38 @@ export function ProductFormDialog({ product, onClose }: Props) {
               render={({ field }) => (
                 <TextField
                   select
-                  label="Tipo"
+                  label={t('Tipo')}
                   {...field}
                   disabled={editing}
-                  helperText={editing ? 'El tipo no se puede cambiar' : undefined}
+                  helperText={editing ? t('El tipo no se puede cambiar') : undefined}
                 >
-                  <MenuItem value="PHYSICAL">Físico (con stock y peso)</MenuItem>
-                  <MenuItem value="DIGITAL">Digital (descargable)</MenuItem>
+                  <MenuItem value="PHYSICAL">{t('Físico (con stock y peso)')}</MenuItem>
+                  <MenuItem value="DIGITAL">{t('Digital (descargable)')}</MenuItem>
                 </TextField>
               )}
             />
             <TextField
-              label="Nombre"
+              label={t('Nombre')}
               {...register('name')}
               error={Boolean(errors.name)}
-              helperText={errors.name?.message}
+              helperText={t(errors.name?.message ?? '')}
             />
             <TextField
-              label="Descripción"
+              label={t('Descripción')}
               multiline
               minRows={2}
               {...register('description')}
               error={Boolean(errors.description)}
-              helperText={errors.description?.message}
+              helperText={t(errors.description?.message ?? '')}
             />
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
-                label="Precio"
+                label={t('Precio')}
                 type="number"
                 fullWidth
                 {...register('price')}
                 error={Boolean(errors.price)}
-                helperText={errors.price?.message}
+                helperText={t(errors.price?.message ?? '')}
                 slotProps={{ htmlInput: { min: 0, step: '0.01' } }}
               />
               <Controller
@@ -129,11 +131,11 @@ export function ProductFormDialog({ product, onClose }: Props) {
                 render={({ field }) => (
                   <TextField
                     select
-                    label="Categoría"
+                    label={t('Categoría')}
                     fullWidth
                     {...field}
                     error={Boolean(errors.categoryId)}
-                    helperText={errors.categoryId?.message}
+                    helperText={t(errors.categoryId?.message ?? '')}
                   >
                     {categories.map((category) => (
                       <MenuItem key={category.id} value={String(category.id)}>
@@ -145,51 +147,54 @@ export function ProductFormDialog({ product, onClose }: Props) {
               />
             </Stack>
             <TextField
-              label="URL de la imagen"
+              label={t('URL de la imagen')}
               {...register('imageUrl')}
               error={Boolean(errors.imageUrl)}
-              helperText={errors.imageUrl?.message}
+              helperText={t(errors.imageUrl?.message ?? '')}
             />
 
             {type === 'PHYSICAL' ? (
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <TextField
-                  label="Stock"
+                  label={t('Stock')}
                   type="number"
                   fullWidth
                   {...register('stock')}
                   error={Boolean(errors.stock)}
-                  helperText={errors.stock?.message}
+                  helperText={t(errors.stock?.message ?? '')}
                   slotProps={{ htmlInput: { min: 0 } }}
                 />
                 <TextField
-                  label="Peso (gramos)"
+                  label={t('Peso (gramos)')}
                   type="number"
                   fullWidth
                   {...register('weightGrams')}
                   error={Boolean(errors.weightGrams)}
-                  helperText={errors.weightGrams?.message}
+                  helperText={t(errors.weightGrams?.message ?? '')}
                   slotProps={{ htmlInput: { min: 0 } }}
                 />
               </Stack>
             ) : (
               <>
                 <TextField
-                  label="URL de descarga"
+                  label={t('URL de descarga')}
                   {...register('downloadUrl')}
                   error={Boolean(errors.downloadUrl)}
                   helperText={
-                    errors.downloadUrl?.message ??
-                    (editing ? 'Déjala vacía para conservar la actual' : undefined)
+                    errors.downloadUrl?.message
+                      ? t(errors.downloadUrl.message)
+                      : editing
+                        ? t('Déjala vacía para conservar la actual')
+                        : undefined
                   }
                 />
                 <Controller
                   name="licenseType"
                   control={control}
                   render={({ field }) => (
-                    <TextField select label="Licencia" {...field}>
-                      <MenuItem value="PERSONAL">Personal</MenuItem>
-                      <MenuItem value="COMMERCIAL">Comercial</MenuItem>
+                    <TextField select label={t('Licencia')} {...field}>
+                      <MenuItem value="PERSONAL">{t('Personal')}</MenuItem>
+                      <MenuItem value="COMMERCIAL">{t('Comercial')}</MenuItem>
                     </TextField>
                   )}
                 />
@@ -198,9 +203,9 @@ export function ProductFormDialog({ product, onClose }: Props) {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>Cancelar</Button>
+          <Button onClick={onClose}>{t('Cancelar')}</Button>
           <Button type="submit" variant="contained" disabled={creating || updating}>
-            {editing ? 'Guardar cambios' : 'Crear producto'}
+            {editing ? t('Guardar cambios') : t('Crear producto')}
           </Button>
         </DialogActions>
       </form>

@@ -4,18 +4,20 @@ import { useGetProductsQuery } from '@/api/api'
 import { errorMessage } from '@/api/errors'
 import { AppPagination } from '@/components/AppPagination'
 import { EmptyState } from '@/components/EmptyState'
+import { useT } from '@/i18n/i18n'
 import { PAGE_SIZE, useProductFilters } from './useProductFilters'
 import { ProductCard, ProductCardSkeleton } from './ProductCard'
 import { ProductFilters } from './ProductFilters'
 
 export function ProductsPage() {
+  const t = useT()
   const { filters, query, update, reset, hasActiveFilters } = useProductFilters()
   const { data, error, isFetching, isLoading, refetch } = useGetProductsQuery(query)
 
   return (
     <Stack spacing={3}>
       <Typography variant="h3" component="h1">
-        Tienda
+        {t('Tienda')}
       </Typography>
       <ProductFilters
         filters={filters}
@@ -29,16 +31,16 @@ export function ProductsPage() {
           severity="error"
           action={
             <Button color="inherit" size="small" onClick={() => refetch()}>
-              Reintentar
+              {t('Reintentar')}
             </Button>
           }
         >
-          {errorMessage(error, 'No pudimos cargar los productos.')}
+          {errorMessage(error, t('No pudimos cargar los productos.'), t)}
         </Alert>
       )}
 
       {isLoading && (
-        <Grid container spacing={3} aria-busy="true" aria-label="Cargando productos">
+        <Grid container spacing={3} aria-busy="true" aria-label={t('Cargando productos')}>
           {Array.from({ length: PAGE_SIZE }, (_, i) => (
             <Grid key={i} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
               <ProductCardSkeleton />
@@ -49,9 +51,9 @@ export function ProductsPage() {
 
       {data && data.content.length === 0 && (
         <EmptyState
-          title="No encontramos plantas con esos filtros"
-          description="Prueba con otro nombre, otra categoría o un rango de precio más amplio."
-          actionLabel="Limpiar filtros"
+          title={t('No encontramos plantas con esos filtros')}
+          description={t('Prueba con otro nombre, otra categoría o un rango de precio más amplio.')}
+          actionLabel={t('Limpiar filtros')}
           onAction={reset}
         />
       )}
@@ -59,7 +61,9 @@ export function ProductsPage() {
       {data && data.content.length > 0 && (
         <>
           <Typography variant="body2" color="text.secondary" aria-live="polite">
-            {data.totalElements} {data.totalElements === 1 ? 'producto' : 'productos'}
+            {data.totalElements === 1
+              ? t('1 producto')
+              : t('{count} productos', { count: data.totalElements })}
           </Typography>
           <Grid
             container
@@ -80,7 +84,7 @@ export function ProductsPage() {
                 update({ page })
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
-              label="Paginación de productos"
+              label={t('Paginación de productos')}
             />
           )}
         </>

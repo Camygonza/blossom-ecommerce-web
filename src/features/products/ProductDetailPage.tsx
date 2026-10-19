@@ -16,23 +16,25 @@ import { useGetProductQuery } from '@/api/api'
 import { errorMessage } from '@/api/errors'
 import type { Product } from '@/api/types'
 import { EmptyState } from '@/components/EmptyState'
+import { useT } from '@/i18n/i18n'
 import { formatMoney, formatWeight } from '@/lib/format'
 import { AddToCart } from '@/features/cart/AddToCart'
 import { ProductImage } from './art/ProductImage'
 import { StockChip } from './ProductCard'
 
 function Specs({ product }: { product: Product }) {
+  const t = useT()
   const rows: [string, string][] =
     product.type === 'PHYSICAL'
       ? [
-          ['Tipo', 'Producto físico'],
-          ['Peso', product.weightGrams != null ? formatWeight(product.weightGrams) : '—'],
-          ['Disponibles', String(product.stock ?? 0)],
+          [t('Tipo'), t('Producto físico')],
+          [t('Peso'), product.weightGrams != null ? formatWeight(product.weightGrams) : '—'],
+          [t('Disponibles'), String(product.stock ?? 0)],
         ]
       : [
-          ['Tipo', 'Producto digital'],
-          ['Licencia', product.licenseType === 'COMMERCIAL' ? 'Comercial' : 'Personal'],
-          ['Entrega', 'Descarga inmediata tras la compra'],
+          [t('Tipo'), t('Producto digital')],
+          [t('Licencia'), product.licenseType === 'COMMERCIAL' ? t('Comercial') : t('Personal')],
+          [t('Entrega'), t('Descarga inmediata tras la compra')],
         ]
   return (
     <Box
@@ -60,6 +62,7 @@ function Specs({ product }: { product: Product }) {
 }
 
 export function ProductDetailPage() {
+  const t = useT()
   const { id } = useParams()
   const navigate = useNavigate()
   const productId = Number(id)
@@ -78,7 +81,7 @@ export function ProductDetailPage() {
       startIcon={<ArrowBack />}
       sx={{ alignSelf: 'flex-start' }}
     >
-      Volver a la tienda
+      {t('Volver a la tienda')}
     </Button>
   )
 
@@ -87,9 +90,9 @@ export function ProductDetailPage() {
       <Stack spacing={2}>
         {back}
         <EmptyState
-          title="Este producto no existe"
-          description="Puede que ya no esté disponible."
-          actionLabel="Ver la tienda"
+          title={t('Este producto no existe')}
+          description={t('Puede que ya no esté disponible.')}
+          actionLabel={t('Ver la tienda')}
           onAction={() => navigate('/productos')}
         />
       </Stack>
@@ -104,11 +107,11 @@ export function ProductDetailPage() {
           severity="error"
           action={
             <Button color="inherit" size="small" onClick={() => refetch()}>
-              Reintentar
+              {t('Reintentar')}
             </Button>
           }
         >
-          {errorMessage(error, 'No pudimos cargar el producto.')}
+          {errorMessage(error, t('No pudimos cargar el producto.'), t)}
         </Alert>
       </Stack>
     )
@@ -116,7 +119,7 @@ export function ProductDetailPage() {
 
   if (isLoading || !product) {
     return (
-      <Stack spacing={2} aria-busy="true" aria-label="Cargando producto">
+      <Stack spacing={2} aria-busy="true" aria-label={t('Cargando producto')}>
         {back}
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 6 }}>

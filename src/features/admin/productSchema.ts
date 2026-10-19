@@ -1,12 +1,13 @@
 import { z } from 'zod'
 import type { Product, ProductInput } from '@/api/types'
 
-const wholeNumber = (label: string) =>
+// Los mensajes quedan en español (clave de traducción); el componente los traduce al mostrarlos.
+const wholeNumber = (required: string, notWhole: string) =>
   z
     .string()
     .trim()
-    .min(1, `Ingresa ${label}`)
-    .refine((v) => /^\d+$/.test(v), `${label} debe ser un número entero`)
+    .min(1, required)
+    .refine((v) => /^\d+$/.test(v), notWhole)
 
 /** Los campos numéricos viajan como texto en el formulario y se convierten al enviar. */
 export const productFormSchema = (editing: boolean) =>
@@ -31,11 +32,15 @@ export const productFormSchema = (editing: boolean) =>
     })
     .superRefine((value, ctx) => {
       if (value.type === 'PHYSICAL') {
-        for (const [field, label] of [
-          ['stock', 'el stock'],
-          ['weightGrams', 'el peso en gramos'],
+        for (const [field, required, notWhole] of [
+          ['stock', 'Ingresa el stock', 'El stock debe ser un número entero'],
+          [
+            'weightGrams',
+            'Ingresa el peso en gramos',
+            'El peso en gramos debe ser un número entero',
+          ],
         ] as const) {
-          const result = wholeNumber(label).safeParse(value[field])
+          const result = wholeNumber(required, notWhole).safeParse(value[field])
           if (!result.success) {
             ctx.addIssue({ code: 'custom', path: [field], message: result.error.issues[0].message })
           }

@@ -16,18 +16,23 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { toneSx } from '@/components/toneChip'
 import { itemAdded, maxQuantityFor } from '@/features/cart/cartSlice'
 import { toastShown } from '@/features/ui/uiSlice'
+import { useT } from '@/i18n/i18n'
 import { formatMoney } from '@/lib/format'
 import { ProductImage } from './art/ProductImage'
 
 export function StockChip({ product }: { product: Product }) {
-  if (product.type === 'DIGITAL') return <Chip size="small" label="Digital" sx={toneSx('info')} />
+  const t = useT()
+  if (product.type === 'DIGITAL')
+    return <Chip size="small" label={t('Digital')} sx={toneSx('info')} />
   const stock = product.stock ?? 0
-  if (stock === 0) return <Chip size="small" label="Agotado" sx={toneSx('error')} />
-  if (stock <= 5) return <Chip size="small" label={`Quedan ${stock}`} sx={toneSx('warning')} />
+  if (stock === 0) return <Chip size="small" label={t('Agotado')} sx={toneSx('error')} />
+  if (stock <= 5)
+    return <Chip size="small" label={t('Quedan {stock}', { stock })} sx={toneSx('warning')} />
   return null
 }
 
 function QuickAdd({ product }: { product: Product }) {
+  const t = useT()
   const dispatch = useAppDispatch()
   const inCart = useAppSelector(
     (state) => state.cart.items.find((item) => item.productId === product.id)?.quantity ?? 0,
@@ -35,10 +40,10 @@ function QuickAdd({ product }: { product: Product }) {
   const unavailable = maxQuantityFor(product) - inCart < 1
   const label =
     maxQuantityFor(product) < 1
-      ? 'Agotado'
+      ? t('Agotado')
       : inCart > 0 && unavailable
-        ? 'En tu carrito'
-        : 'Agregar'
+        ? t('En tu carrito')
+        : t('Agregar')
   return (
     <Button
       size="small"
@@ -46,10 +51,14 @@ function QuickAdd({ product }: { product: Product }) {
       startIcon={<AddShoppingCart />}
       disabled={unavailable}
       // el nombre accesible empieza por el texto visible (WCAG 2.5.3)
-      aria-label={unavailable ? `${label}: ${product.name}` : `Agregar ${product.name} al carrito`}
+      aria-label={
+        unavailable
+          ? `${label}: ${product.name}`
+          : t('Agregar {name} al carrito', { name: product.name })
+      }
       onClick={() => {
         dispatch(itemAdded({ product }))
-        dispatch(toastShown(`${product.name} se agregó al carrito`, 'success'))
+        dispatch(toastShown(t('{name} se agregó al carrito', { name: product.name }), 'success'))
       }}
     >
       {label}
