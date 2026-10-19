@@ -29,7 +29,7 @@ export function renderApp(path = '/', { auth }: Options = {}) {
 export async function accessibilityViolations(container: Element) {
   const results = await axe.run(container, {
     runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
-    // jsdom no calcula estilos reales: el contraste se revisa en el navegador (Playwright, F7)
+    // jsdom no calcula estilos reales: el contraste se revisa en el navegador (Playwright)
     rules: { 'color-contrast': { enabled: false } },
   })
   return results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length})`)
