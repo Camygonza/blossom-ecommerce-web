@@ -15,7 +15,7 @@ test('demo: registro, búsqueda, compra, historial y gestión de la orden como a
   // Registro
   await page.goto('/')
   await pause()
-  await page.getByRole('link', { name: 'Crear cuenta' }).click()
+  await page.getByRole('banner').getByRole('link', { name: 'Crear cuenta' }).click()
   await page.getByLabel('Nombre completo').fill('Ana Demo')
   await page.getByLabel('Correo').fill(email)
   await page.getByLabel('Contraseña', { exact: true }).fill(PASSWORD)
@@ -31,7 +31,7 @@ test('demo: registro, búsqueda, compra, historial y gestión de la orden como a
   await page.getByRole('combobox', { name: 'Categoría' }).click()
   await page.getByRole('option', { name: 'Plantas de interior' }).click()
   await pause()
-  await page.getByLabel('Precio máx.').fill('40')
+  await page.getByLabel('Precio máx.').fill('40000')
   await pause(2000)
   await page.getByRole('combobox', { name: 'Ordenar por' }).click()
   await page.getByRole('option', { name: 'Precio: menor a mayor' }).click()
