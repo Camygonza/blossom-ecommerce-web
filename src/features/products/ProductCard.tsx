@@ -53,12 +53,12 @@ function QuickAdd({ product }: { product: Product }) {
       // el nombre accesible empieza por el texto visible (WCAG 2.5.3)
       aria-label={
         unavailable
-          ? `${label}: ${product.name}`
-          : t('Agregar {name} al carrito', { name: product.name })
+          ? `${label}: ${t(product.name)}`
+          : t('Agregar {name} al carrito', { name: t(product.name) })
       }
       onClick={() => {
         dispatch(itemAdded({ product }))
-        dispatch(toastShown(t('{name} se agregó al carrito', { name: product.name }), 'success'))
+        dispatch(toastShown(t('{name} se agregó al carrito', { name: t(product.name) }), 'success'))
       }}
     >
       {label}
@@ -67,6 +67,7 @@ function QuickAdd({ product }: { product: Product }) {
 }
 
 export function ProductCard({ product }: { product: Product }) {
+  const t = useT()
   return (
     <Card
       sx={{
@@ -97,7 +98,7 @@ export function ProductCard({ product }: { product: Product }) {
           />
           <Chip
             size="small"
-            label={product.category.name}
+            label={t(product.category.name)}
             sx={{
               position: 'absolute',
               top: 12,
@@ -114,7 +115,7 @@ export function ProductCard({ product }: { product: Product }) {
         </Box>
         <CardContent sx={{ pb: 1 }}>
           <Typography variant="h6" component="h3" sx={{ lineHeight: 1.25, fontSize: '1.1rem' }}>
-            {product.name}
+            {t(product.name)}
           </Typography>
           {product.description && (
             <Typography
@@ -129,7 +130,7 @@ export function ProductCard({ product }: { product: Product }) {
                 minHeight: '2.8em',
               }}
             >
-              {product.description}
+              {t(product.description)}
             </Typography>
           )}
         </CardContent>

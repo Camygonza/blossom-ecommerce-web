@@ -58,7 +58,9 @@ export function AddToCart({ product }: { product: Product }) {
         startIcon={<AddShoppingCart />}
         onClick={() => {
           dispatch(itemAdded({ product, quantity: safeQuantity }))
-          dispatch(toastShown(t('{name} se agregó al carrito', { name: product.name }), 'success'))
+          dispatch(
+            toastShown(t('{name} se agregó al carrito', { name: t(product.name) }), 'success'),
+          )
           setText('1')
         }}
       >

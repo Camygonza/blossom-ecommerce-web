@@ -162,7 +162,7 @@ export function ProductDetailPage() {
           <Stack spacing={2}>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <Chip
-                label={product.category.name}
+                label={t(product.category.name)}
                 size="small"
                 component={RouterLink}
                 to={`/productos?categoria=${product.category.id}`}
@@ -171,13 +171,13 @@ export function ProductDetailPage() {
               <StockChip product={product} />
             </Stack>
             <Typography variant="h3" component="h1">
-              {product.name}
+              {t(product.name)}
             </Typography>
             <Typography variant="h4" component="p" color="primary">
               {formatMoney(product.price)}
             </Typography>
             {product.description && (
-              <Typography color="text.secondary">{product.description}</Typography>
+              <Typography color="text.secondary">{t(product.description)}</Typography>
             )}
             <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
               <Stack spacing={3}>

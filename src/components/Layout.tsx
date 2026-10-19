@@ -39,9 +39,14 @@ function LanguageButton() {
       aria-label={t('Cambiar idioma a {language}', {
         language: next === 'en' ? 'English' : 'Español',
       })}
-      sx={{ minWidth: 0, px: 1.25, fontWeight: 700 }}
+      sx={{
+        minWidth: 0,
+        px: { xs: 0.75, sm: 1.25 },
+        fontWeight: 700,
+        fontSize: { xs: '0.75rem', sm: '0.875rem' },
+      }}
     >
-      {next.toUpperCase()}
+      {next === 'en' ? 'English' : 'Español'}
     </Button>
   )
 }

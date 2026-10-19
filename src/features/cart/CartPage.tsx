@@ -106,7 +106,7 @@ export function CartPage() {
                       to={`/productos/${item.productId}`}
                       sx={{ fontWeight: 600, color: 'inherit', textDecoration: 'none' }}
                     >
-                      {item.name}
+                      {t(item.name)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       {t('{price} c/u', { price: formatMoney(item.price) })}
@@ -114,7 +114,7 @@ export function CartPage() {
                     <Stack direction="row" sx={{ alignItems: 'center', mt: 1 }}>
                       <IconButton
                         size="small"
-                        aria-label={t('Quitar una unidad de {name}', { name: item.name })}
+                        aria-label={t('Quitar una unidad de {name}', { name: t(item.name) })}
                         disabled={item.quantity <= 1}
                         onClick={() =>
                           dispatch(
@@ -126,14 +126,14 @@ export function CartPage() {
                       </IconButton>
                       <Typography
                         component="span"
-                        aria-label={t('Cantidad de {name}', { name: item.name })}
+                        aria-label={t('Cantidad de {name}', { name: t(item.name) })}
                         sx={{ minWidth: 32, textAlign: 'center' }}
                       >
                         {item.quantity}
                       </Typography>
                       <IconButton
                         size="small"
-                        aria-label={t('Agregar una unidad de {name}', { name: item.name })}
+                        aria-label={t('Agregar una unidad de {name}', { name: t(item.name) })}
                         disabled={item.quantity >= item.maxQuantity}
                         onClick={() =>
                           dispatch(
@@ -150,7 +150,7 @@ export function CartPage() {
                       {formatMoney(item.price * item.quantity)}
                     </Typography>
                     <IconButton
-                      aria-label={t('Eliminar {name} del carrito', { name: item.name })}
+                      aria-label={t('Eliminar {name} del carrito', { name: t(item.name) })}
                       onClick={() => dispatch(itemRemoved(item.productId))}
                     >
                       <DeleteOutline />

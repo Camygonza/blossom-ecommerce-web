@@ -1,3 +1,4 @@
+import { useT } from '@/i18n/i18n'
 import { Box } from '@mui/material'
 import { useState } from 'react'
 import { ProductArt, type ArtProduct } from './ProductArt'
@@ -14,6 +15,7 @@ interface Props {
  * Así el catálogo nunca muestra imágenes rotas.
  */
 export function ProductImage({ product, ratio = '4 / 3', rounded = 0 }: Props) {
+  const t = useT()
   const [failedUrl, setFailedUrl] = useState<string | null>(null)
   const url = product.imageUrl
   const showPhoto = Boolean(url) && failedUrl !== url
@@ -31,7 +33,7 @@ export function ProductImage({ product, ratio = '4 / 3', rounded = 0 }: Props) {
         <Box
           component="img"
           src={url ?? undefined}
-          alt={product.name}
+          alt={t(product.name)}
           loading="lazy"
           onError={() => setFailedUrl(url ?? null)}
           sx={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}

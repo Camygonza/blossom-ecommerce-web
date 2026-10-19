@@ -4,7 +4,10 @@
  * Las claves que no están en un `t('…')` literal (etiquetas de estado y mensajes de los schemas zod)
  * se traducen al mostrarlas y las vigila `Language.test.tsx`.
  */
+import { productsEn } from './productsEn'
+
 export const en: Record<string, string> = {
+  ...productsEn,
   // Layout: cabecera, menú de usuario, buscador
   'Cambiar idioma a {language}': 'Switch language to {language}',
   'Saltar al contenido': 'Skip to content',

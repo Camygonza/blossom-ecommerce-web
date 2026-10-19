@@ -1,3 +1,4 @@
+import { useT } from '@/i18n/i18n'
 import { useTheme } from '@mui/material'
 import { useId, type ReactNode } from 'react'
 import { C } from './palette'
@@ -106,6 +107,7 @@ const FALLBACK_BACKDROP: [string, string, string, string] = [
 /** Ilustración del producto (SVG, 4:3) con fondo degradado, círculos suaves y sombra de suelo. */
 export function ProductArt({ product, className }: { product: ArtProduct; className?: string }) {
   const dark = useTheme().palette.mode === 'dark'
+  const t = useT()
   const id = useId().replace(/:/g, '')
   const palette = BACKDROPS[product.categoryId] ?? FALLBACK_BACKDROP
   const [top, bottom] = dark ? [palette[2], palette[3]] : [palette[0], palette[1]]
@@ -114,7 +116,7 @@ export function ProductArt({ product, className }: { product: ArtProduct; classN
     <svg
       viewBox="0 0 200 150"
       role="img"
-      aria-label={product.name}
+      aria-label={t(product.name)}
       className={className}
       style={{ display: 'block', width: '100%', height: '100%' }}
       preserveAspectRatio="xMidYMid slice"

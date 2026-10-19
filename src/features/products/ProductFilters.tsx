@@ -81,7 +81,7 @@ export function ProductFilters({ filters, onChange, onReset, canReset }: Props) 
             <MenuItem value="">{t('Todas')}</MenuItem>
             {categories.map((category) => (
               <MenuItem key={category.id} value={String(category.id)}>
-                {category.name}
+                {t(category.name)}
               </MenuItem>
             ))}
           </TextField>

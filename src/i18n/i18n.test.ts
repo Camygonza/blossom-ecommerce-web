@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { en } from './en'
+import { productsEn } from './productsEn'
 import { translate } from './i18n'
 
 function sourceFiles(dir: string): string[] {
@@ -46,7 +47,7 @@ describe('translations', () => {
 
   it('should_not_keep_translations_for_texts_no_longer_used', () => {
     const used = new Set(usedKeys().map(({ key }) => key))
-    const dynamic = Object.keys(en).filter((key) => !used.has(key))
+    const dynamic = Object.keys(en).filter((key) => !used.has(key) && !(key in productsEn))
     // permite claves que se arman fuera de t('…') (p. ej. etiquetas de estado); la lista debe revisarse si crece
     expect(dynamic.length).toBeLessThan(80)
   })
@@ -56,5 +57,15 @@ describe('translations', () => {
     for (const [es, english] of Object.entries(en)) {
       expect(placeholders(english), es).toEqual(placeholders(es))
     }
+  })
+})
+
+describe('product translations', () => {
+  it('should_translate_the_seed_product_names_and_descriptions_to_english', () => {
+    expect(translate('en', 'Costilla de Adán')).toBe('Monstera')
+    expect(translate('en', 'Potus')).toBe('Pothos')
+    expect(translate('en', 'PDF de 60 páginas con riego, luz y plagas.')).toBe(
+      '60-page PDF on watering, light and pests.',
+    )
   })
 })
