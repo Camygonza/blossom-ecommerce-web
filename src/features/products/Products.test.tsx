@@ -2,7 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
-import { accessibilityViolations, renderApp } from '@/test/render'
+import { accessibilityViolations, renderApp, money } from '@/test/render'
 import { problem } from '@/test/handlers'
 import { server } from '@/test/server'
 
@@ -11,7 +11,7 @@ describe('ProductsPage', () => {
     const { container } = renderApp('/productos')
 
     expect(await screen.findByText('Monstera Deliciosa')).toBeInTheDocument()
-    expect(screen.getByText('$45.90')).toBeInTheDocument()
+    expect(screen.getByText(money(45.9))).toBeInTheDocument()
     expect(screen.getByText('Quedan 3')).toBeInTheDocument()
     expect(screen.getAllByText('Agotado').length).toBeGreaterThan(0)
     expect(screen.getByText('Digital')).toBeInTheDocument()
@@ -155,7 +155,7 @@ describe('ProductDetailPage', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Monstera Deliciosa' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('$45.90')).toBeInTheDocument()
+    expect(screen.getByText(money(45.9))).toBeInTheDocument()
     expect(screen.getByText('Producto físico')).toBeInTheDocument()
     expect(screen.getByText('1,8 kg')).toBeInTheDocument()
     expect(screen.getByText('12')).toBeInTheDocument()

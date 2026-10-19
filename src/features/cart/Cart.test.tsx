@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { authFor, admin, customer } from '@/test/fixtures'
 import { problem } from '@/test/handlers'
-import { accessibilityViolations, renderApp } from '@/test/render'
+import { accessibilityViolations, header, renderApp, money } from '@/test/render'
 import { server } from '@/test/server'
 
 const addFromDetail = async (user: ReturnType<typeof userEvent.setup>) => {
@@ -77,16 +77,16 @@ describe('CartPage', () => {
       await screen.findByRole('button', { name: 'Agregar Monstera Deliciosa al carrito' }),
     )
     await user.click(screen.getByRole('button', { name: 'Agregar Pothos Dorado al carrito' }))
-    await user.click(screen.getByRole('link', { name: /Carrito/ }))
+    await user.click(header().getByRole('link', { name: /Carrito/ }))
 
-    expect(await screen.findByLabelText('Total del carrito')).toHaveTextContent('$68.40')
+    expect(await screen.findByLabelText('Total del carrito')).toHaveTextContent(money(68.4))
     expect(await accessibilityViolations(container)).toEqual([])
 
     await user.click(
       screen.getByRole('button', { name: 'Agregar una unidad de Monstera Deliciosa' }),
     )
     expect(screen.getByLabelText('Cantidad de Monstera Deliciosa')).toHaveTextContent('2')
-    expect(screen.getByLabelText('Total del carrito')).toHaveTextContent('$114.30')
+    expect(screen.getByLabelText('Total del carrito')).toHaveTextContent(money(114.3))
 
     await user.click(
       screen.getByRole('button', { name: 'Quitar una unidad de Monstera Deliciosa' }),
@@ -97,7 +97,7 @@ describe('CartPage', () => {
 
     await user.click(screen.getByRole('button', { name: 'Eliminar Pothos Dorado del carrito' }))
     expect(screen.queryByText('Pothos Dorado')).not.toBeInTheDocument()
-    expect(screen.getByLabelText('Total del carrito')).toHaveTextContent('$45.90')
+    expect(screen.getByLabelText('Total del carrito')).toHaveTextContent(money(45.9))
 
     await user.click(screen.getByRole('button', { name: 'Vaciar carrito' }))
     expect(await screen.findByText('Tu carrito está vacío')).toBeInTheDocument()
@@ -109,7 +109,7 @@ describe('CartPage', () => {
     await user.clear(await screen.findByLabelText('Cantidad'))
     await user.type(screen.getByLabelText('Cantidad'), '9')
     await addFromDetail(user)
-    await user.click(screen.getByRole('link', { name: /Carrito/ }))
+    await user.click(header().getByRole('link', { name: /Carrito/ }))
 
     expect(await screen.findByLabelText('Cantidad de Pothos Dorado')).toHaveTextContent('3')
     expect(
@@ -123,7 +123,7 @@ describe('checkout', () => {
     const user = userEvent.setup()
     const { router } = renderApp('/productos/1')
     await addFromDetail(user)
-    await user.click(screen.getByRole('link', { name: /Carrito/ }))
+    await user.click(header().getByRole('link', { name: /Carrito/ }))
 
     await user.click(await screen.findByRole('button', { name: 'Ingresa para comprar' }))
     await waitFor(() => expect(router.state.location.pathname).toBe('/login'))
@@ -186,7 +186,7 @@ describe('checkout', () => {
     await user.clear(await screen.findByLabelText('Cantidad'))
     await user.type(screen.getByLabelText('Cantidad'), '2')
     await addFromDetail(user)
-    await user.click(screen.getByRole('link', { name: /Carrito/ }))
+    await user.click(header().getByRole('link', { name: /Carrito/ }))
 
     await user.click(await screen.findByRole('button', { name: 'Finalizar compra' }))
 
@@ -213,7 +213,7 @@ describe('checkout', () => {
     renderApp('/productos/1', { auth: authFor(customer) })
     await screen.findByRole('button', { name: 'Cliente Demo' })
     await addFromDetail(user)
-    await user.click(screen.getByRole('link', { name: /Carrito/ }))
+    await user.click(header().getByRole('link', { name: /Carrito/ }))
 
     await user.click(await screen.findByRole('button', { name: 'Finalizar compra' }))
 
@@ -227,7 +227,7 @@ describe('checkout', () => {
     renderApp('/productos/1', { auth: authFor(admin) })
     await screen.findByRole('button', { name: 'Admin Bloom' })
     await addFromDetail(user)
-    await user.click(screen.getByRole('link', { name: /Carrito/ }))
+    await user.click(header().getByRole('link', { name: /Carrito/ }))
 
     await user.click(await screen.findByRole('button', { name: 'Finalizar compra' }))
 

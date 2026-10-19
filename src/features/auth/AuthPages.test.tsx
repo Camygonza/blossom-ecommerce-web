@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { getAccessToken, getRefreshToken } from '@/api/session'
-import { accessibilityViolations, renderApp } from '@/test/render'
+import { accessibilityViolations, header, renderApp } from '@/test/render'
 import { admin, authFor, customer } from '@/test/fixtures'
 import { problem } from '@/test/handlers'
 import { server } from '@/test/server'
@@ -153,7 +153,7 @@ describe('session', () => {
 
     renderApp('/productos', { auth: authFor(customer) })
 
-    expect(await screen.findByRole('link', { name: 'Ingresar' })).toBeInTheDocument()
+    expect(await header().findByRole('link', { name: 'Ingresar' })).toBeInTheDocument()
     expect(getRefreshToken()).toBeNull()
   })
 
@@ -164,7 +164,7 @@ describe('session', () => {
     await user.click(await screen.findByRole('button', { name: 'Cliente Demo' }))
     await user.click(await screen.findByRole('menuitem', { name: 'Cerrar sesión' }))
 
-    expect(await screen.findByRole('link', { name: 'Ingresar' })).toBeInTheDocument()
+    expect(await header().findByRole('link', { name: 'Ingresar' })).toBeInTheDocument()
     expect(getAccessToken()).toBeNull()
     expect(getRefreshToken()).toBeNull()
   })

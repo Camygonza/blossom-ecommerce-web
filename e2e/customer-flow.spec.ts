@@ -18,18 +18,18 @@ test('cliente: registro, búsqueda, compra, historial y cancelación', async ({ 
   // 2. Listado y búsqueda con filtros
   await expect(page.getByRole('heading', { level: 3 }).first()).toBeVisible()
   await shot(page, info, '02-listado')
-  await page.getByLabel('Buscar por nombre').fill('monstera')
-  await expect(page.getByRole('heading', { name: 'Monstera Deliciosa', level: 3 })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Pothos Dorado', level: 3 })).toHaveCount(0)
-  await expect(page).toHaveURL(/q=monstera/)
+  await page.getByLabel('Buscar por nombre').fill('costilla')
+  await expect(page.getByRole('heading', { name: 'Costilla de Adán', level: 3 })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Potus', level: 3 })).toHaveCount(0)
+  await expect(page).toHaveURL(/q=costilla/)
   await shot(page, info, '03-busqueda')
 
   // 3. Detalle y carrito
   await page
-    .getByRole('link', { name: /Monstera Deliciosa/ })
+    .getByRole('link', { name: /Costilla de Adán/ })
     .first()
     .click()
-  await expect(page.getByRole('heading', { name: 'Monstera Deliciosa', level: 1 })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Costilla de Adán', level: 1 })).toBeVisible()
   await shot(page, info, '04-detalle')
   await page.getByRole('button', { name: 'Agregar al carrito' }).click()
   await expect(page.getByRole('link', { name: 'Carrito, 1 artículo' })).toBeVisible()
@@ -73,7 +73,7 @@ test('el carrito sobrevive a recargar y exige login para pagar', async ({ page }
   await page.getByLabel('Contraseña').fill('Cliente123!')
   await page.getByRole('button', { name: 'Ingresar' }).click()
   await expect(page).toHaveURL(/\/carrito$/)
-  await expect(page.getByText('Pothos Dorado')).toBeVisible()
+  await expect(page.getByText('Potus')).toBeVisible()
 })
 
 test('la sesión se restaura al recargar y se cierra al salir', async ({ page }) => {

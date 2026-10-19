@@ -1,10 +1,11 @@
-import { render } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import axe from 'axe-core'
 import App from '@/App'
 import { createTestRouter } from '@/app/router'
 import { createStore } from '@/app/store'
 import { endSession, startSession } from '@/api/session'
 import type { AuthResponse } from '@/api/types'
+import { formatMoney } from '@/lib/format'
 
 interface Options {
   /** Sesión ya iniciada antes de montar (equivale a haberse logueado antes). */
@@ -33,3 +34,14 @@ export async function accessibilityViolations(container: Element) {
   })
   return results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length})`)
 }
+
+/** Consultas limitadas a la cabecera: el pie repite enlaces como «Carrito» o «Ingresar». */
+export const header = () => ({
+  getByRole: (...args: Parameters<typeof screen.getByRole>) =>
+    within(screen.getByRole('banner')).getByRole(...args),
+  findByRole: async (...args: Parameters<typeof screen.findByRole>) =>
+    within(await screen.findByRole('banner')).findByRole(...args),
+})
+
+/** formatMoney con los espacios no separables como espacio normal, que es lo que ve Testing Library. */
+export const money = (value: number) => formatMoney(value).replace(/ /g, ' ')

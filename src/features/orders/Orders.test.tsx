@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { admin, authFor, customer, orderFixture } from '@/test/fixtures'
 import { problem } from '@/test/handlers'
-import { accessibilityViolations, renderApp } from '@/test/render'
+import { accessibilityViolations, renderApp, money } from '@/test/render'
 import { server } from '@/test/server'
 
 describe('OrdersPage', () => {
@@ -14,7 +14,7 @@ describe('OrdersPage', () => {
 
     expect(await screen.findByText('Orden #7')).toBeInTheDocument()
     expect(screen.getByText('Pendiente')).toBeInTheDocument()
-    expect(screen.getByText('$91.80')).toBeInTheDocument()
+    expect(screen.getByText(money(91.8))).toBeInTheDocument()
     expect(screen.getByText(/2 artículos/)).toBeInTheDocument()
     expect(await accessibilityViolations(container)).toEqual([])
 
@@ -86,8 +86,8 @@ describe('OrderDetailPage', () => {
     const { container } = renderApp('/ordenes/7', { auth: authFor(customer) })
 
     expect(await screen.findByRole('heading', { name: 'Orden #7' })).toBeInTheDocument()
-    expect(screen.getByText('2 × $45.90')).toBeInTheDocument()
-    expect(screen.getByLabelText('Total de la orden')).toHaveTextContent('$91.80')
+    expect(screen.getByText(`2 × ${money(45.9)}`)).toBeInTheDocument()
+    expect(screen.getByLabelText('Total de la orden')).toHaveTextContent(money(91.8))
     expect(screen.getByLabelText('Progreso de la orden')).toBeInTheDocument()
     expect(await accessibilityViolations(container)).toEqual([])
   })

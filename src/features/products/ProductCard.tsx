@@ -1,23 +1,23 @@
 import AddShoppingCart from '@mui/icons-material/AddShoppingCart'
 import {
+  Box,
   Button,
   Card,
-  CardActions,
   CardActionArea,
+  CardActions,
   CardContent,
-  CardMedia,
   Chip,
   Skeleton,
-  Stack,
   Typography,
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import type { Product } from '@/api/types'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { toneSx } from '@/components/toneChip'
 import { itemAdded, maxQuantityFor } from '@/features/cart/cartSlice'
 import { toastShown } from '@/features/ui/uiSlice'
-import { toneSx } from '@/components/toneChip'
 import { formatMoney } from '@/lib/format'
+import { ProductImage } from './art/ProductImage'
 
 export function StockChip({ product }: { product: Product }) {
   if (product.type === 'DIGITAL') return <Chip size="small" label="Digital" sx={toneSx('info')} />
@@ -42,7 +42,7 @@ function QuickAdd({ product }: { product: Product }) {
   return (
     <Button
       size="small"
-      variant="outlined"
+      variant={unavailable ? 'outlined' : 'contained'}
       startIcon={<AddShoppingCart />}
       disabled={unavailable}
       // el nombre accesible empieza por el texto visible (WCAG 2.5.3)
@@ -59,39 +59,76 @@ function QuickAdd({ product }: { product: Product }) {
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <CardActionArea component={RouterLink} to={`/productos/${product.id}`} sx={{ flexGrow: 1 }}>
-        {product.imageUrl ? (
-          <CardMedia
-            component="img"
-            image={product.imageUrl}
-            alt={product.name}
-            loading="lazy"
-            sx={{ aspectRatio: '4 / 3', objectFit: 'cover' }}
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        '& .art svg, & .art img': { transition: 'transform .5s ease' },
+        '&:hover .art svg, &:hover .art img': { transform: 'scale(1.06)' },
+        '@media (prefers-reduced-motion: reduce)': {
+          '& .art svg, & .art img': { transition: 'none' },
+          '&:hover .art svg, &:hover .art img': { transform: 'none' },
+        },
+      }}
+    >
+      <CardActionArea
+        component={RouterLink}
+        to={`/productos/${product.id}`}
+        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
+      >
+        <Box className="art" sx={{ position: 'relative', overflow: 'hidden' }}>
+          <ProductImage
+            product={{
+              name: product.name,
+              categoryId: product.category.id,
+              type: product.type,
+              imageUrl: product.imageUrl,
+            }}
           />
-        ) : (
-          <Skeleton
-            variant="rectangular"
-            animation={false}
-            sx={{ aspectRatio: '4 / 3', height: 'auto' }}
+          <Chip
+            size="small"
+            label={product.category.name}
+            sx={{
+              position: 'absolute',
+              top: 12,
+              left: 12,
+              bgcolor: 'rgba(255,255,255,0.9)',
+              color: '#1d2b24',
+              fontWeight: 600,
+              backdropFilter: 'blur(6px)',
+            }}
           />
-        )}
-        <CardContent>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1, minHeight: 24 }}>
-            <Typography variant="caption" color="text.secondary">
-              {product.category.name}
-            </Typography>
+          <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
             <StockChip product={product} />
-          </Stack>
-          <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+          </Box>
+        </Box>
+        <CardContent sx={{ pb: 1 }}>
+          <Typography variant="h6" component="h3" sx={{ lineHeight: 1.25, fontSize: '1.1rem' }}>
             {product.name}
           </Typography>
-          <Typography variant="h6" component="p" color="primary" sx={{ mt: 0.5 }}>
-            {formatMoney(product.price)}
-          </Typography>
+          {product.description && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                mt: 0.75,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                minHeight: '2.8em',
+              }}
+            >
+              {product.description}
+            </Typography>
+          )}
         </CardContent>
       </CardActionArea>
-      <CardActions sx={{ px: 2, pb: 2, pt: 0 }}>
+      <CardActions sx={{ px: 2, pb: 2, pt: 0.5, justifyContent: 'space-between' }}>
+        <Typography variant="h5" component="p" color="primary" sx={{ fontWeight: 700 }}>
+          {formatMoney(product.price)}
+        </Typography>
         <QuickAdd product={product} />
       </CardActions>
     </Card>
@@ -100,12 +137,12 @@ export function ProductCard({ product }: { product: Product }) {
 
 export function ProductCardSkeleton() {
   return (
-    <Card sx={{ height: '100%' }} aria-hidden="true">
+    <Card sx={{ height: '100%', '&:hover': { transform: 'none' } }} aria-hidden="true">
       <Skeleton variant="rectangular" sx={{ aspectRatio: '4 / 3', height: 'auto' }} />
       <CardContent>
-        <Skeleton width="40%" />
-        <Skeleton width="80%" height={28} />
-        <Skeleton width="30%" height={32} />
+        <Skeleton width="70%" height={28} />
+        <Skeleton width="95%" />
+        <Skeleton width="40%" height={36} />
       </CardContent>
     </Card>
   )

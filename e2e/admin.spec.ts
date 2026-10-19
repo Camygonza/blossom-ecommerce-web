@@ -13,7 +13,7 @@ test('admin: crea, edita y elimina un producto', async ({ page }, info) => {
   await page.getByRole('button', { name: 'Nuevo producto' }).click()
   const dialog = page.getByRole('dialog', { name: 'Nuevo producto' })
   await dialog.getByLabel('Nombre').fill(name)
-  await dialog.getByLabel('Precio').fill('9.50')
+  await dialog.getByLabel('Precio').fill('9500')
   await dialog.getByRole('combobox', { name: 'Categoría' }).click()
   await page.getByRole('option', { name: 'Flores' }).click()
   await dialog.getByLabel('Stock').fill('3')
@@ -24,17 +24,17 @@ test('admin: crea, edita y elimina un producto', async ({ page }, info) => {
   // aparece en el catálogo público con su precio
   await page.goto(`/productos?q=${encodeURIComponent(name)}`)
   await expect(page.getByRole('heading', { name, level: 3 })).toBeVisible()
-  await expect(page.getByText('$9.50')).toBeVisible()
+  await expect(page.getByText('9.500')).toBeVisible()
 
   // edición (envía la versión leída)
   await page.goto('/admin/productos')
   await page.getByLabel('Buscar producto').fill(name)
   await page.getByRole('button', { name: `Editar ${name}` }).click()
   const edit = page.getByRole('dialog', { name: 'Editar producto' })
-  await edit.getByLabel('Precio').fill('12.00')
+  await edit.getByLabel('Precio').fill('12000')
   await edit.getByRole('button', { name: 'Guardar cambios' }).click()
   await expect(page.getByText(`«${name}» actualizado`)).toBeVisible()
-  await expect(page.getByRole('row', { name: new RegExp(name) })).toContainText('$12.00')
+  await expect(page.getByRole('row', { name: new RegExp(name) })).toContainText('12.000')
 
   // baja
   await page.getByRole('button', { name: `Eliminar ${name}` }).click()

@@ -18,6 +18,7 @@ import { useCreateOrderMutation } from '@/api/api'
 import { errorMessage } from '@/api/errors'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { EmptyState } from '@/components/EmptyState'
+import { ProductImage } from '@/features/products/art/ProductImage'
 import { toastShown } from '@/features/ui/uiSlice'
 import { formatMoney } from '@/lib/format'
 import {
@@ -85,14 +86,18 @@ export function CartPage() {
             {items.map((item) => (
               <Paper key={item.productId} component="li" variant="outlined" sx={{ p: 2 }}>
                 <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                  {item.imageUrl && (
-                    <Box
-                      component="img"
-                      src={item.imageUrl}
-                      alt=""
-                      sx={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 2 }}
+                  <Box sx={{ width: 84, flexShrink: 0 }}>
+                    <ProductImage
+                      product={{
+                        name: item.name,
+                        categoryId: item.categoryId ?? 0,
+                        type: item.type,
+                        imageUrl: item.imageUrl,
+                      }}
+                      ratio="1 / 1"
+                      rounded={3}
                     />
-                  )}
+                  </Box>
                   <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                     <Typography
                       component={RouterLink}

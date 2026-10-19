@@ -14,6 +14,8 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // las pruebas montan la app completa (rutas lazy, axe) y corren en paralelo: 5 s es poco en un equipo cargado
+    testTimeout: 20000,
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],

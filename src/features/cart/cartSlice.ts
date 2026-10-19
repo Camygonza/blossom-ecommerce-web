@@ -8,6 +8,9 @@ export interface CartItem {
   /** Precio de referencia: el api congela el real al crear la orden. */
   price: number
   imageUrl: string | null
+  /** Para dibujar su ilustración si no hay foto; opcionales por compatibilidad con carritos guardados. */
+  categoryId?: number
+  type?: 'PHYSICAL' | 'DIGITAL'
   quantity: number
   /** Tope por línea: el stock en físicos, 1 en digitales (una licencia por guía), 100 como máximo del api. */
   maxQuantity: number
@@ -77,6 +80,8 @@ const cartSlice = createSlice({
           name: product.name,
           price: product.price,
           imageUrl: product.imageUrl,
+          categoryId: product.category.id,
+          type: product.type,
           quantity: clamp(quantity, max),
           maxQuantity: max,
         })

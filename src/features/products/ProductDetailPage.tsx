@@ -1,5 +1,15 @@
 import ArrowBack from '@mui/icons-material/ArrowBack'
-import { Alert, Box, Button, Chip, Divider, Skeleton, Stack, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Divider,
+  Paper,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
 import { useGetProductQuery } from '@/api/api'
@@ -8,6 +18,7 @@ import type { Product } from '@/api/types'
 import { EmptyState } from '@/components/EmptyState'
 import { formatMoney, formatWeight } from '@/lib/format'
 import { AddToCart } from '@/features/cart/AddToCart'
+import { ProductImage } from './art/ProductImage'
 import { StockChip } from './ProductCard'
 
 function Specs({ product }: { product: Product }) {
@@ -126,14 +137,23 @@ export function ProductDetailPage() {
       {back}
       <Grid container spacing={4}>
         <Grid size={{ xs: 12, md: 6 }}>
-          {product.imageUrl && (
-            <Box
-              component="img"
-              src={product.imageUrl}
-              alt={product.name}
-              sx={{ width: '100%', aspectRatio: '4 / 3', objectFit: 'cover', borderRadius: 3 }}
+          <Box
+            sx={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              boxShadow: '0 24px 60px -28px rgba(31,61,49,0.45)',
+            }}
+          >
+            <ProductImage
+              product={{
+                name: product.name,
+                categoryId: product.category.id,
+                type: product.type,
+                imageUrl: product.imageUrl,
+              }}
+              ratio="1 / 1"
             />
-          )}
+          </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <Stack spacing={2}>
@@ -156,9 +176,13 @@ export function ProductDetailPage() {
             {product.description && (
               <Typography color="text.secondary">{product.description}</Typography>
             )}
-            <Divider />
-            <Specs product={product} />
-            <AddToCart product={product} />
+            <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
+              <Stack spacing={3}>
+                <Specs product={product} />
+                <Divider />
+                <AddToCart product={product} />
+              </Stack>
+            </Paper>
           </Stack>
         </Grid>
       </Grid>
