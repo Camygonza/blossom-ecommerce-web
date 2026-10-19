@@ -21,10 +21,30 @@ import { Link as RouterLink, Outlet, useNavigate } from 'react-router-dom'
 import { useLogoutMutation } from '@/api/api'
 import { useColorMode } from '@/app/colorMode'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { useI18n } from '@/i18n/i18n'
 import { selectCartCount } from '@/features/cart/cartSlice'
 import { toastShown } from '@/features/ui/uiSlice'
 import { Logo } from './Logo'
 import { ToastHost } from './ToastHost'
+
+function LanguageButton() {
+  const { lang, setLang, t } = useI18n()
+  const next = lang === 'es' ? 'en' : 'es'
+  return (
+    <Button
+      color="inherit"
+      size="small"
+      onClick={() => setLang(next)}
+      lang={next}
+      aria-label={t('Cambiar idioma a {language}', {
+        language: next === 'en' ? 'English' : 'Español',
+      })}
+      sx={{ minWidth: 0, px: 1.25, fontWeight: 700 }}
+    >
+      {next.toUpperCase()}
+    </Button>
+  )
+}
 
 function CartButton() {
   const count = useAppSelector(selectCartCount)
@@ -307,6 +327,7 @@ export function Layout() {
           >
             {mode === 'dark' ? <LightModeOutlined /> : <DarkModeOutlined />}
           </IconButton>
+          <LanguageButton />
           <CartButton />
           <UserMenu />
         </Toolbar>

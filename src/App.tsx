@@ -2,6 +2,7 @@ import { Provider } from 'react-redux'
 import { RouterProvider, type DataRouter } from 'react-router-dom'
 import { ColorModeProvider } from '@/app/ColorModeProvider'
 import type { AppStore } from '@/app/store'
+import { I18nProvider } from '@/i18n/i18n'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { SessionBootstrap } from '@/features/auth/SessionBootstrap'
 
@@ -15,11 +16,13 @@ function App({ store, router }: AppProps) {
   return (
     <ErrorBoundary>
       <Provider store={store}>
-        <ColorModeProvider>
-          <SessionBootstrap>
-            <RouterProvider router={router} />
-          </SessionBootstrap>
-        </ColorModeProvider>
+        <I18nProvider>
+          <ColorModeProvider>
+            <SessionBootstrap>
+              <RouterProvider router={router} />
+            </SessionBootstrap>
+          </ColorModeProvider>
+        </I18nProvider>
       </Provider>
     </ErrorBoundary>
   )
