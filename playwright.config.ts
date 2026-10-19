@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test'
 
 // Usa el Chrome instalado (PW_CHANNEL=chromium para el que descarga `npx playwright install chromium`, p. ej. en CI).
 const channel = process.env.PW_CHANNEL ?? 'chrome'
+// PW_BASE_URL apunta a un stack ya levantado (p. ej. docker compose en http://localhost:3000); sin ella se usa Vite en :5173.
+const baseURL = process.env.PW_BASE_URL ?? 'http://localhost:5173'
 
 /**
  * E2E contra el api real: requiere el backend en http://localhost:8080 (docker compose del api o
@@ -16,7 +18,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL,
     locale: 'es',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -27,9 +29,7 @@ export default defineConfig({
     { name: 'desktop', use: { ...devices['Desktop Chrome'], channel } },
     { name: 'mobile', use: { ...devices['Pixel 7'], channel } },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: process.env.PW_BASE_URL
+    ? undefined
+    : { command: 'npm run dev', url: baseURL, reuseExistingServer: !process.env.CI },
 })

@@ -29,6 +29,9 @@ async function violations(page: Page): Promise<string[]> {
   )
 }
 
+// axe se inyecta como script en línea: con la CSP de nginx activa hay que saltarla solo en esta prueba
+test.use({ bypassCSP: true })
+
 const PUBLIC_PAGES = [
   '/',
   '/productos',
