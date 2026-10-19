@@ -35,9 +35,9 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         channel,
-        viewport: { width: 1280, height: 720 },
-        video: { mode: 'on', size: { width: 1280, height: 720 } },
-        launchOptions: { slowMo: 250 },
+        viewport: { width: 1600, height: 900 },
+        video: { mode: 'on', size: { width: 1600, height: 900 } },
+        launchOptions: { slowMo: 400 },
       },
     },
   ],
