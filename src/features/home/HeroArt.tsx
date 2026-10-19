@@ -2,9 +2,9 @@ import { Box } from '@mui/material'
 import { useT } from '@/i18n/i18n'
 
 const PHOTOS = [
-  { src: '/products/01.jpg', sx: { gridRow: 'span 2', aspectRatio: '3 / 4' } },
-  { src: '/products/08.jpg', sx: { aspectRatio: '1 / 1' } },
-  { src: '/products/04.jpg', sx: { aspectRatio: '1 / 1' } },
+  { src: '/products/01.jpg', sx: { gridRow: 'span 2' } },
+  { src: '/products/08.jpg', sx: {} },
+  { src: '/products/04.jpg', sx: {} },
 ]
 
 /** Collage de fotos del hero: una planta grande y dos tomas más pequeñas. */
@@ -14,7 +14,13 @@ export function HeroArt() {
     <Box
       role="img"
       aria-label={t('Plantas y flores')}
-      sx={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 1.5 }}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 1fr)',
+        gridTemplateRows: 'repeat(2, minmax(0, 1fr))',
+        gap: 1.5,
+        aspectRatio: '1.1 / 1',
+      }}
     >
       {PHOTOS.map(({ src, sx }) => (
         <Box
