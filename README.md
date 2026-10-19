@@ -11,6 +11,10 @@ Consume la API del repo hermano [`blossom-ecommerce-api`](https://github.com/Cam
 
 Desde el repo del api (clonados uno junto al otro): `cp env.ejemplo .env && docker compose up --build` y abre <http://localhost:3000>. nginx sirve la SPA y reenvía `/api` a la API (mismo origen, sin CORS).
 
+### En la nube
+
+El repo del api trae un Blueprint de Render que despliega este web junto a la API y PostgreSQL. La imagen lee `API_UPSTREAM` (URL de la API) y `API_HOST` (su host) para el proxy `/api` de nginx; por defecto apuntan al servicio `api` de docker compose.
+
 ### Desarrollo
 
 ```bash

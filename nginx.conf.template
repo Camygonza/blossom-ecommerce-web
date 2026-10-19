@@ -10,14 +10,20 @@ server {
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: https://images.unsplash.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
 
-    # La API vive en otro contenedor; el navegador solo ve este origen.
+    # La API vive en otro servicio; el navegador solo ve este origen (sin CORS).
+    # API_UPSTREAM y API_HOST llegan por variables de entorno (docker compose: http://api:8080 / api).
     location /api/ {
-        proxy_pass http://api:8080;
-        proxy_set_header Host $host;
+        proxy_pass ${API_UPSTREAM};
+        proxy_http_version 1.1;
+        # el host de la API (no el del navegador): una plataforma que enruta por Host lo necesita
+        proxy_set_header Host ${API_HOST};
+        proxy_ssl_server_name on;
+        proxy_ssl_name ${API_HOST};
         proxy_set_header X-Real-IP $remote_addr;
         # se pisa (no se acumula) para que un cliente no pueda falsear su IP ante el rate limit del api
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 90s;
     }
 
     # Los assets llevan hash en el nombre: caché larga (add_header en un location anula los del server, se repiten)
