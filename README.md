@@ -54,6 +54,8 @@ PW_BASE_URL=http://localhost:3000 npm run e2e
 npm run e2e
 ```
 
+`npm run e2e:demo` graba el recorrido completo (registro → compra → administración) en video de 1280×720 con cámara lenta (necesita `npx playwright install ffmpeg` una vez; el video queda en `test-results/`).
+
 Usa el Chrome instalado; con `PW_CHANNEL=chromium` usa el de Playwright (`npx playwright install chromium`). `E2E_SHOTS=<carpeta>` guarda capturas de cada paso.
 
 ## Decisiones de diseño

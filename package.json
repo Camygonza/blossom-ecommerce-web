@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "e2e": "playwright test",
+    "e2e": "playwright test --project=desktop --project=mobile",
+    "e2e:demo": "playwright test --project=demo",
     "format": "prettier --write src"
   },
   "dependencies": {

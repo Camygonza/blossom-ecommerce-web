@@ -26,8 +26,20 @@ export default defineConfig({
     video: (process.env.PW_VIDEO as 'on' | 'retain-on-failure' | undefined) ?? 'off',
   },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'], channel } },
-    { name: 'mobile', use: { ...devices['Pixel 7'], channel } },
+    { name: 'desktop', testIgnore: /demo.spec.ts/, use: { ...devices['Desktop Chrome'], channel } },
+    { name: 'mobile', testIgnore: /demo.spec.ts/, use: { ...devices['Pixel 7'], channel } },
+    // Solo para grabar el video de la demo (npm run e2e:demo): cámara lenta y video siempre activo
+    {
+      name: 'demo',
+      testMatch: /demo.spec.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        channel,
+        viewport: { width: 1280, height: 720 },
+        video: { mode: 'on', size: { width: 1280, height: 720 } },
+        launchOptions: { slowMo: 250 },
+      },
+    },
   ],
   webServer: process.env.PW_BASE_URL
     ? undefined
