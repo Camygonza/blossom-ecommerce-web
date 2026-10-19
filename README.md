@@ -58,6 +58,8 @@ Usa el Chrome instalado; con `PW_CHANNEL=chromium` usa el de Playwright (`npx pl
 
 ## Decisiones de diseño
 
+Detalle y alternativas descartadas en [`docs/decisiones.md`](docs/decisiones.md) (D5 y D21 son las del frontend).
+
 - **RTK Query con `baseQuery` sobre axios**: caché, invalidación por tags (comprar o cancelar invalida el catálogo porque cambia el stock) y estados de carga sin escribir thunks.
 - **Tokens**: access en memoria y refresh en `localStorage`; trade-off XSS asumido y mitigado con una CSP estricta en nginx.
 - **La URL como estado de los filtros**: botón «atrás», enlaces compartibles y sin estado duplicado.
