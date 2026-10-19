@@ -35,14 +35,14 @@ Necesita la API arriba (ver su README). Usuarios de demostración: `cliente@bloo
 | Carrito y checkout | Redux persistido en `localStorage`; topes por stock (una licencia por guía digital). El checkout pide login y vuelve al carrito. |
 | Órdenes | Historial paginado, detalle con progreso, cancelación de órdenes pendientes. |
 | Administración | Panel de productos (alta, edición con control de versión, baja) y de órdenes (filtro y cambio de estado con las transiciones válidas). |
-| UX | Modo claro/oscuro, skeletons, estados vacíos ilustrados, toasts, error boundary, rutas con lazy loading, responsive y accesible (WCAG 2.1 AA). |
+| UX | Precios en COP, interfaz en español e inglés (selector en la cabecera), fotos reales de producto con ilustración de respaldo, modo claro/oscuro, skeletons, estados vacíos ilustrados, toasts, error boundary, rutas con lazy loading, responsive y accesible (WCAG 2.1 AA). |
 
 Estructura: `src/api` (axios, sesión, RTK Query, errores), `src/app` (store, router, tema), `src/features/{auth,products,cart,orders,admin,home,ui}`, `src/components`.
 
 ## Tests
 
 ```bash
-npm test                 # Vitest + React Testing Library + MSW (112 tests, ≈ 94 % de cobertura)
+npm test                 # Vitest + React Testing Library + MSW (165 tests, ≈ 95 % de cobertura)
 npm run test:coverage    # informe en coverage/
 npm run lint && npm run build
 ```
@@ -86,4 +86,4 @@ Detalle y alternativas descartadas en [`docs/decisiones.md`](docs/decisiones.md)
 - Pago real y entrega de productos digitales (enlace de descarga autorizado).
 - Búsqueda con sugerencias y filtro por varias categorías; imágenes optimizadas (`srcset`).
 - Tipos generados desde `docs/openapi.json` (hoy se mantienen a mano) y pruebas visuales de regresión.
-- Internacionalización (hoy solo español) y favoritos/reseñas.
+- Nombres y descripciones traducidos desde el api (`Accept-Language`; hoy se traducen en el front solo los del seed, D23) y favoritos/reseñas.
