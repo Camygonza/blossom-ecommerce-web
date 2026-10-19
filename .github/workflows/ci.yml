@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Formato
+        run: npx prettier --check src e2e playwright.config.ts
+      - name: Lint
+        run: npm run lint
+      - name: Tests con cobertura
+        run: npm run test:coverage
+      - name: Build (tsc + vite)
+        run: npm run build
+      - name: Informe de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir la imagen
+        run: docker build -t bloom-web:ci .
+
+  # Los E2E (Playwright) necesitan el stack completo: se ejecutan a mano con `docker compose up` del repo del api
+  # y `PW_BASE_URL=http://localhost:3000 npm run e2e`.
